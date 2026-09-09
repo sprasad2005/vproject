@@ -28,7 +28,7 @@ import {
   Table as TableIcon
 } from 'lucide-react';
 
-const API_BASE = 'http://127.0.0.1:8000/api';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
 const SUPPORTED_DISEASES = [
   {
@@ -1260,10 +1260,11 @@ export default function App() {
           </div>
 
           <div className="footer-right">
-            <span>Status: <strong style={{ color: 'var(--primary-green)' }}>● Running Locally</strong></span>
-            <span>Host: <code>127.0.0.1:5173</code></span>
-            <span>API: <code>127.0.0.1:8000</code></span>
+            <span>Status: <strong style={{ color: 'var(--primary-green)' }}>● {systemHealth.status === 'healthy' ? 'Active' : 'Standby'}</strong></span>
+            <span>Device: <code>{systemHealth.device.toUpperCase()}</code></span>
+            <span>Model: <code>Phase 3B Multi-Task</code></span>
           </div>
+
         </div>
       </footer>
     </div>

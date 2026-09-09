@@ -1,11 +1,4 @@
-"""Application Configuration for RiceGuard Localhost Backend.
-
-Discovers immutable Phase 3B model checkpoints, frozen decoding configurations,
-and configures localhost-only server settings.
-"""
-
-from __future__ import annotations
-
+import os
 import json
 from pathlib import Path
 from typing import Any, Dict, List
@@ -21,17 +14,18 @@ def get_project_root() -> Path:
 class Settings:
     """RiceGuard Application Settings."""
 
-    PROJECT_NAME: str = "RiceGuard"
+    PROJECT_NAME: str = os.getenv("PROJECT_NAME", "RiceGuard")
     PROJECT_VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
 
-    # CORS origins strictly for local development
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ]
+    # CORS origins: configured via ALLOWED_ORIGINS env var (comma-separated), with safe defaults
+    _raw_origins = os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000,https://riceguard.vercel.app"
+    )
+    CORS_ORIGINS: List[str] = [origin.strip() for origin in _raw_origins.split(",") if origin.strip()]
+
 
     # Canonical Classes (Order 0..5)
     CANONICAL_CLASSES: List[str] = [

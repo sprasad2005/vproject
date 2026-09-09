@@ -1,0 +1,25 @@
+\begin{table}[htbp]
+\centering
+\caption{System Environment and Reproducibility Provenance Audit}
+\label{tab:reproducibility}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ll}
+\toprule
+\textbf{Component / Parameter} & \textbf{Audited System Specification} \\
+\midrule
+Python Runtime & 3.11.9 \\
+PyTorch Framework & 2.6.0+cu124 \\
+Torchvision Package & 0.21.0+cu124 \\
+CUDA Acceleration & CUDA 12.4 (cuDNN 90100) \\
+Host Hardware Platform & NVIDIA GeForce GTX 1650 (4 GB GDDR6) \\
+Operating System & Windows 10 (Build 10.0.26200) \\
+Random Seed & 42 (Fixed across Python, NumPy, PyTorch) \\
+Total Audited Artifacts & 23 primary research artifacts (Checkpoints, CSVs) \\
+Artifact Hash Verification & 23 intact (0 missing / 0 corrupted) \\
+Audit Verdict & \texttt{PASSED\_FULLY\_REPRODUCIBLE} \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+

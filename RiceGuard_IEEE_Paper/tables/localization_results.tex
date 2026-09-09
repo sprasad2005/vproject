@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Localization Ablation and Calibration Comparison (Phase 3 vs. Phase 3B)}
+\label{tab:localization_results}
+\small
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Model Phase} & \textbf{Precision} & \textbf{Recall} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Healthy FPR} & \textbf{Boxes / Image} \\
+\midrule
+Phase 3 (Uncalibrated) & 0.0223 & 0.0914 & 0.0358 & 0.6032 & 21.52\% & 8.81 \\
+Phase 3B (Calibrated) & \textbf{0.0887} & \textbf{0.0924} & \textbf{0.0905} & \textbf{0.6423} & \textbf{10.97\%} & \textbf{2.24} \\
+\midrule
+$\Delta$ (Relative Change) & +297.8\% & +1.1\% & +152.8\% & +6.5\% & -49.0\% & -74.6\% \\
+\bottomrule
+\end{tabular}
+\end{table*}
+

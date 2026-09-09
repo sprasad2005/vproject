@@ -1,0 +1,39 @@
+models:
+  resnet50:
+    family: cnn
+    architecture: resnet50
+    pretrained: true
+    weights: IMAGENET1K_V2
+    num_classes: 6
+    dropout_rate: 0.2
+    freeze_backbone: false
+
+  efficientnet_b4:
+    family: cnn
+    architecture: efficientnet_b4
+    pretrained: true
+    weights: IMAGENET1K_V1
+    num_classes: 6
+    dropout_rate: 0.3
+    freeze_backbone: false
+
+  vit_base_patch16_224:
+    family: transformer
+    architecture: vit_b_16
+    pretrained: true
+    weights: IMAGENET1K_V1
+    num_classes: 6
+    dropout_rate: 0.1
+    freeze_backbone: false
+
+  lesion_aware_resnet50:
+    family: lesion_aware
+    base_architecture: resnet50
+    pretrained: true
+    num_classes: 6
+    attention_type: spatial_channel_lesion_guided
+    supervision:
+      use_bounding_box: true
+      loss_weight: 0.3
+
+default_model: resnet50

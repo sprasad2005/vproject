@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{Statistical Significance Hypothesis Tests and Measured Effect Sizes}
+\label{tab:statistical_results}
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Comparison / Hypothesis} & \textbf{Statistical Test} & \textbf{Statistic} & \textbf{$p$-value} & \textbf{Mean Diff.} & \textbf{Conclusion} \\
+\midrule
+Classification Invariance (P2B vs P3B) & McNemar's Test ($\chi^2$) & $\chi^2 = 1.18$ & $0.2774$ & -0.0116 & Fail to Reject $H_0$ (Invariance) \\
+Energy Inside Mask (All Samples) & Paired Wilcoxon & $W = 1.74 \times 10^6$ & $5.12 \times 10^{-285}$ & -0.0283 & Reject $H_0$ ($p < 0.001$) \\
+Attribution IoU (All Samples) & Paired Wilcoxon & $W = 1.96 \times 10^6$ & $9.59 \times 10^{-95}$ & -0.0140 & Reject $H_0$ ($p < 0.001$) \\
+Pointing Game (Mutually Correct) & McNemar's Test & $\chi^2 = 0.155$ & $0.6936$ & +0.0143 & Not Significant ($p \ge 0.05$) \\
+Pointing Game (Correct 3B Only) & McNemar's Test & $\chi^2 = 1.984$ & $0.1589$ & +0.0363 & Not Significant ($p \ge 0.05$) \\
+Healthy FPR Reduction (P3 vs P3B) & Fisher's Exact Test & $\text{OR} = 0.118$ & $< 10^{-6}$ & -0.1055 & Reject $H_0$ ($p < 0.001$) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+

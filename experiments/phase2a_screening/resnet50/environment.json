@@ -1,0 +1,25 @@
+{
+  "seed": 42,
+  "python_version": "3.11.9",
+  "pytorch_version": "2.6.0+cu124",
+  "numpy_version": "2.4.6",
+  "cuda_available": true,
+  "cuda_version": "12.4",
+  "cudnn_version": "90100",
+  "gpu_name": "NVIDIA GeForce GTX 1650",
+  "gpu_count": 1,
+  "operating_system": "Windows 10 (10.0.26200)",
+  "platform_machine": "AMD64",
+  "platform_processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "model_name": "resnet50",
+  "device": "cuda:0",
+  "canonical_classes": [
+    "Healthy",
+    "Blast",
+    "Brown Spot",
+    "Leaf Smut",
+    "Tungro",
+    "Sheath Blight"
+  ],
+  "timestamp": "2026-09-08 19:22:36"
+}

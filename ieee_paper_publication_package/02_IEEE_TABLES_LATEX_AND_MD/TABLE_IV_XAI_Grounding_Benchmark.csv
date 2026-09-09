@@ -1,0 +1,5 @@
+Metric,Phase2B_Baseline,Phase3B_Proposed,Absolute_Delta,Relative_Gain,P_Value,Effect_Size_d
+Attribution IoU (mean),0.1421,0.2487,+0.1066,+75.02%,< 0.0001,+0.842 (Large)
+Energy Inside Mask (EIM),0.2643,0.4215,+0.1572,+59.48%,< 0.0001,+0.915 (Large)
+Pointing Game Accuracy,0.5824,0.7641,+0.1817,+31.20%,< 0.001,+0.780 (Medium-Large)
+Healthy Background Entropy,3.8412,2.1205,-1.7207,-44.80%,< 0.0001,-1.042 (Large)

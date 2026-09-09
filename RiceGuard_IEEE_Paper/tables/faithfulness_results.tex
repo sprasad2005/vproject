@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Explainability Faithfulness Evaluation on Saliency Deletion and Insertion Curves ($N=300$)}
+\label{tab:faithfulness_results}
+\small
+\setlength{\tabcolsep}{10pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model Architecture} & \textbf{Deletion AUC ($\downarrow$)} & \textbf{Insertion AUC ($\uparrow$)} & \textbf{Border Attention ($\downarrow$)} & \textbf{Attr. Entropy ($\downarrow$)} \\
+\midrule
+Phase 2B Baseline & $0.1387 \pm 0.2086$ & $\mathbf{0.2939 \pm 0.2979}$ & 18.5\% & 0.824 \\
+Phase 3B Refined & $\mathbf{0.1367 \pm 0.1482}$ & $0.1486 \pm 0.1682$ & \textbf{9.2\%} & \textbf{0.612} \\
+\midrule
+Difference ($\Delta$) & -0.0021 & -0.1453 & -9.3\% & -0.212 \\
+Statistical Significance & $p = 0.187$ (N.S.) & $p = 3.58 \times 10^{-9}$ (Sig.) & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table*}
+

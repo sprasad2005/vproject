@@ -1,0 +1,25 @@
+uncertainty:
+  methods:
+    - predictive_entropy
+    - mc_dropout
+    - mutual_information
+    - energy_score
+
+  mc_dropout:
+    num_samples: 30
+    dropout_rate: 0.2
+
+  selective_prediction:
+    policy: accept_abstain
+    threshold_metric: calibrated_confidence
+    min_confidence_threshold: 0.75
+    max_uncertainty_threshold: 0.35
+    abstain_label: "ABSTAIN_HUMAN_REVIEW"
+    evaluate_risk_coverage: true
+
+  ood_detection:
+    method: energy_score
+    in_distribution_dataset: RiceLeafDiseaseBD
+    out_of_distribution_datasets:
+      - Sethy5932
+      - RiceLeafDiseaseBD5

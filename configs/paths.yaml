@@ -1,0 +1,23 @@
+paths:
+  data:
+    root: data
+    primary: "RiceLeafDiseaseBD A Field-Based Annotated Smartpho"
+    external_sethy: "Rice Leaf Disease Image Samples"
+    external_bd5: "RiceLeafDisease-BD5 A Field-Collected Five-Class I"
+    xai_ground_truth: "RiceSeg-5932 Complete Pixel-Level Segmentation Mas"
+    processed: data/processed
+
+  dataset_reports: dataset_reports
+  splits: splits
+  checkpoints: checkpoints
+  logs: logs
+  experiments: experiments
+
+  results:
+    root: results
+    figures: results/figures
+    metrics: results/metrics
+    predictions: results/predictions
+    explanations: results/explanations
+    robustness: results/robustness
+    reports: results/reports

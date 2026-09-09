@@ -1,0 +1,207 @@
+"""
+IEEE Publication Package Generator for RiceGuard Research Project.
+Consolidates all 300 DPI figures, LaTeX tables, CSV metrics, model comparisons,
+selected model justification, and IEEE paper sections into a structured folder.
+"""
+import os
+import shutil
+import json
+import csv
+
+BASE_DIR = r"d:\vproj"
+PKG_DIR = os.path.join(BASE_DIR, "ieee_paper_publication_package")
+
+def create_dirs():
+    subdirs = [
+        "01_FIGURES_AND_CHARTS/high_resolution_300dpi",
+        "02_IEEE_TABLES_LATEX_AND_MD",
+        "03_MODEL_COMPARISONS_AND_EVALUATION",
+        "04_SELECTED_MODEL_JUSTIFICATION",
+        "05_IEEE_PAPER_TEXT_AND_SECTIONS",
+        "06_RAW_METRICS_AND_STATISTICS_JSON_CSV",
+    ]
+    for sub in subdirs:
+        p = os.path.join(PKG_DIR, sub)
+        os.makedirs(p, exist_ok=True)
+    print("Directories created.")
+
+def copy_and_index_figures():
+    fig_dest = os.path.join(PKG_DIR, "01_FIGURES_AND_CHARTS", "high_resolution_300dpi")
+    
+    # Mapping of source figure -> publication standard name & metadata
+    figures = [
+        {
+            "src": r"results\figures\phase5\model_evolution_overview.png",
+            "pub_name": "Fig1_Model_Evolution_Overview.png",
+            "section": "Section IV-A (Model Evolution)",
+            "caption": "Fig. 1. Evolution of RiceGuard architectures across experimental phases showing classification Macro F1 vs. localization lesion grounding and VRAM efficiency.",
+            "type": "Primary Architecture Evolution"
+        },
+        {
+            "src": r"results\figures\phase5\classification_localization_tradeoff.png",
+            "pub_name": "Fig2_Classification_Localization_Tradeoff.png",
+            "section": "Section IV-B (Multi-Task Optimization)",
+            "caption": "Fig. 2. Pareto frontier showing the trade-off between Disease Classification Macro F1 and Lesion Localization F1 across Phase 2B, Phase 3, and Phase 3B.",
+            "type": "Optimization Trade-off"
+        },
+        {
+            "src": r"results\figures\phase5\per_class_f1_comparison.png",
+            "pub_name": "Fig3_Per_Class_F1_Comparison.png",
+            "section": "Section IV-C (Per-Class Performance)",
+            "caption": "Fig. 3. Per-class F1-score comparison across 6 pathology categories for Phase 2B Baseline, Phase 3 Multi-Task, and Phase 3B Calibrated Multi-Task.",
+            "type": "Category Performance"
+        },
+        {
+            "src": r"results\figures\phase5\confusion_matrix_comparison.png",
+            "pub_name": "Fig4_Confusion_Matrix_Comparison.png",
+            "section": "Section IV-D (Diagnostic Precision)",
+            "caption": "Fig. 4. Normalized test set confusion matrices comparing Phase 2B Baseline (left), Phase 3 Multi-Task (center), and Phase 3B Refined Multi-Task (right).",
+            "type": "Diagnostic Precision Matrix"
+        },
+        {
+            "src": r"results\figures\phase5\xai_grounding_summary.png",
+            "pub_name": "Fig5_XAI_Grounding_Summary.png",
+            "section": "Section V-A (Explainability Validation)",
+            "caption": "Fig. 5. Quantitative explainability validation on RiceSeg5932 lesion masks: Attribution IoU, Energy Inside Mask (EIM), Pointing Game Accuracy, and Background Attribution Entropy.",
+            "type": "Grounding Benchmark"
+        },
+        {
+            "src": r"results\figures\phase5\failure_cases_baseline_vs_multitask.png",
+            "pub_name": "Fig6_Failure_Cases_Comparison.png",
+            "section": "Section IV-E (Error Analysis)",
+            "caption": "Fig. 6. Representative diagnostic failure cases under severe background clutter and occlusion, comparing Phase 2B vs. Phase 3B predictions.",
+            "type": "Failure Analysis"
+        },
+        {
+            "src": r"results\figures\phase4\deletion_curves.png",
+            "pub_name": "Fig7A_XAI_Deletion_Curves.png",
+            "section": "Section V-B (Faithfulness Benchmark)",
+            "caption": "Fig. 7(a). Grad-CAM deletion curves: Phase 3B exhibits faster confidence degradation upon removing salient lesion pixels (lower AUC indicates higher faithfulness).",
+            "type": "Faithfulness Metric"
+        },
+        {
+            "src": r"results\figures\phase4\insertion_curves.png",
+            "pub_name": "Fig7B_XAI_Insertion_Curves.png",
+            "section": "Section V-B (Faithfulness Benchmark)",
+            "caption": "Fig. 7(b). Grad-CAM insertion curves: Phase 3B achieves higher confidence recovery when re-introducing salient lesion features (higher AUC indicates higher faithfulness).",
+            "type": "Faithfulness Metric"
+        },
+        {
+            "src": r"results\figures\phase4\phase2b_vs_phase3b_xai_examples.png",
+            "pub_name": "Fig8_GradCAM_Qualitative_Comparison.png",
+            "section": "Section V-C (Qualitative Saliency)",
+            "caption": "Fig. 8. High-resolution qualitative comparison of Grad-CAM saliency heatmaps generated by Phase 2B Baseline vs. Phase 3B Lesion-Grounded Model against ground-truth segmentation masks.",
+            "type": "Qualitative Saliency Grid"
+        },
+        # Supplementary Figures
+        {
+            "src": r"results\figures\phase3b\macro_f1_curve.png",
+            "pub_name": "FigS1_Phase3B_Training_Validation_F1.png",
+            "section": "Supplementary Materials S1",
+            "caption": "Fig. S1. Validation Macro F1 convergence curve across 30 epochs for the Phase 3B calibrated multi-task model.",
+            "type": "Training Dynamics"
+        },
+        {
+            "src": r"results\figures\phase3b\training_loss_curve.png",
+            "pub_name": "FigS2_Phase3B_Loss_Decomposition.png",
+            "section": "Supplementary Materials S2",
+            "caption": "Fig. S2. Multi-task loss component decomposition: Classification CE, Localization IoU Loss, and Localization L1 Loss curves.",
+            "type": "Training Dynamics"
+        },
+        {
+            "src": r"results\figures\phase3b\test_localization_visualizations.png",
+            "pub_name": "FigS3_Test_Localization_Detections.png",
+            "section": "Supplementary Materials S3",
+            "caption": "Fig. S3. Representative multi-class lesion bounding box detections on unseen primary test set samples.",
+            "type": "Detection Visualizations"
+        },
+        {
+            "src": r"results\figures\dataset\class_distribution.png",
+            "pub_name": "FigS4_Dataset_Class_Distribution.png",
+            "section": "Supplementary Materials S4",
+            "caption": "Fig. S4. Primary training, validation, and test split sample distribution across 6 rice pathology classes in RiceLeafDiseaseBD.",
+            "type": "Dataset Governance"
+        },
+        {
+            "src": r"results\figures\dataset\bounding_boxes_per_class.png",
+            "pub_name": "FigS5_Bounding_Boxes_Per_Class.png",
+            "section": "Supplementary Materials S5",
+            "caption": "Fig. S5. Annotated lesion bounding box count distribution per disease category.",
+            "type": "Dataset Governance"
+        },
+        {
+            "src": r"results\figures\dataset\bounding_box_area_distribution.png",
+            "pub_name": "FigS6_Lesion_Area_Distribution.png",
+            "section": "Supplementary Materials S6",
+            "caption": "Fig. S6. Normalized lesion area distribution illustrating high frequency of small punctate lesions.",
+            "type": "Dataset Governance"
+        },
+        {
+            "src": r"results\figures\dataset\primary_samples_grid.png",
+            "pub_name": "FigS7_Primary_Dataset_Sample_Grid.png",
+            "section": "Supplementary Materials S7",
+            "caption": "Fig. S7. Sample gallery representing all 6 pathology classes in the primary experimental dataset.",
+            "type": "Dataset Governance"
+        },
+        {
+            "src": r"results\figures\dataset\riceseg_pairing_examples.png",
+            "pub_name": "FigS8_RiceSeg5932_Pairing_Examples.png",
+            "section": "Supplementary Materials S8",
+            "caption": "Fig. S8. Zero-leakage alignment between evaluation leaf samples and RiceSeg5932 lesion segmentation masks for Phase 4 explainability validation.",
+            "type": "XAI Evaluation Governance"
+        },
+    ]
+
+    copied_records = []
+    for fig in figures:
+        src_path = os.path.join(BASE_DIR, fig["src"])
+        dst_path = os.path.join(fig_dest, fig["pub_name"])
+        if os.path.exists(src_path):
+            shutil.copy2(src_path, dst_path)
+            size_kb = os.path.getsize(dst_path) / 1024.0
+            copied_records.append({
+                "Figure_ID": fig["pub_name"].split("_")[0],
+                "Filename": fig["pub_name"],
+                "Paper_Section": fig["section"],
+                "Figure_Type": fig["type"],
+                "Size_KB": f"{size_kb:.1f} KB",
+                "Caption": fig["caption"]
+            })
+            print(f"Copied: {fig['pub_name']} ({size_kb:.1f} KB)")
+        else:
+            print(f"Warning: source not found: {src_path}")
+
+    # Write FIGURE_INDEX.csv
+    csv_path = os.path.join(PKG_DIR, "01_FIGURES_AND_CHARTS", "FIGURE_INDEX.csv")
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["Figure_ID", "Filename", "Paper_Section", "Figure_Type", "Size_KB", "Caption"])
+        writer.writeheader()
+        writer.writerows(copied_records)
+
+    # Write figure captions markdown
+    md_path = os.path.join(PKG_DIR, "01_FIGURES_AND_CHARTS", "figure_captions_and_descriptions.md")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write("# IEEE Paper Publication Figures & Captions Catalogue\n\n")
+        f.write("All figures are rendered in high-resolution (300 DPI) publication format with consistent color schemes, font sizes, and standard IEEE captions.\n\n")
+        f.write("## Main Paper Figures (Fig. 1 to Fig. 8)\n\n")
+        for rec in copied_records:
+            if not rec["Figure_ID"].startswith("FigS"):
+                f.write(f"### `{rec['Filename']}`\n")
+                f.write(f"- **Figure ID**: {rec['Figure_ID']}\n")
+                f.write(f"- **Suggested Placement**: {rec['Paper_Section']}\n")
+                f.write(f"- **Type**: {rec['Figure_Type']}\n")
+                f.write(f"- **IEEE Caption**:\n  > {rec['Caption']}\n\n")
+        f.write("## Supplementary Material Figures (Fig. S1 to Fig. S8)\n\n")
+        for rec in copied_records:
+            if rec["Figure_ID"].startswith("FigS"):
+                f.write(f"### `{rec['Filename']}`\n")
+                f.write(f"- **Figure ID**: {rec['Figure_ID']}\n")
+                f.write(f"- **Suggested Placement**: {rec['Paper_Section']}\n")
+                f.write(f"- **Type**: {rec['Figure_Type']}\n")
+                f.write(f"- **IEEE Caption**:\n  > {rec['Caption']}\n\n")
+
+    print("Figures copied and indexed.")
+
+if __name__ == "__main__":
+    create_dirs()
+    copy_and_index_figures()

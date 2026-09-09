@@ -1,0 +1,7 @@
+class,precision,recall,f1_score,support
+Healthy,0.9262,0.9536,0.9397,237
+Blast,0.8565,0.8995,0.8775,199
+Brown Spot,0.9215,0.8257,0.871,327
+Leaf Smut,0.7565,0.7982,0.7768,109
+Tungro,0.8939,0.9496,0.9209,337
+Sheath Blight,0.9677,0.9302,0.9486,258

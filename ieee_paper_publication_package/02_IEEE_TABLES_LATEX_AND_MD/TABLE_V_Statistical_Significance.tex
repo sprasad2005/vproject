@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Statistical Significance Hypothesis Tests for Key Evaluation Metrics}
+\label{tab:statistical_tests}
+\begin{tabular}{llccc}
+\hline
+\textbf{Hypothesis / Comparison} & \textbf{Statistical Test} & \textbf{Test Statistic} & \textbf{$p$-value} & \textbf{Scientific Conclusion} \\
+\hline
+Attribution IoU: P3B $>$ P2B & Paired Student's $t$-test & $t = 14.82$ & $<10^{-12}$ & Reject $H_0$ ($p < 0.001$) \\
+Energy Inside Mask: P3B $>$ P2B & Wilcoxon Signed-Rank & $W = 4210.5$ & $<10^{-10}$ & Reject $H_0$ ($p < 0.001$) \\
+Classif. Preservation: P3B $\approx$ P2B & McNemar's Test ($\chi^2$) & $\chi^2 = 1.18$ & $0.2774$ & Fail to Reject $H_0$ (Invariance) \\
+Healthy FPR: P3B $<$ P3 & Fisher's Exact Test & $\text{OR} = 0.118$ & $<10^{-6}$ & Reject $H_0$ ($p < 0.001$) \\
+\hline
+\end{tabular}
+\end{table}

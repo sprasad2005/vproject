@@ -1,0 +1,14 @@
+\begin{table*}[htbp]
+\centering
+\caption{Comprehensive Architecture Evolution and Cross-Phase Performance Benchmarks}
+\label{tab:master_evolution}
+\begin{tabular}{llcccccccc}
+\hline
+\textbf{Phase} & \textbf{Model Architecture} & \textbf{Macro F1} & \textbf{Accuracy} & \textbf{Loc. Prec.} & \textbf{Loc. Recall} & \textbf{Loc. F1} & \textbf{Healthy FPR} & \textbf{Attr. IoU} & \textbf{EIM} \\
+\hline
+Phase 2B & EfficientNet-B0 (Classif. Baseline) & \textbf{0.8891} & \textbf{0.8942} & -- & -- & -- & -- & 0.1421 & 0.2643 \\
+Phase 3 & EfficientNet-B0 (Uncalibrated MT) & 0.8729 & 0.8783 & 0.0223 & 0.0914 & 0.0358 & 21.52\% & 0.1890 & 0.3312 \\
+\textbf{Phase 3B} & \textbf{RiceGuard (Calibrated MT)} & 0.8814 & 0.8867 & \textbf{0.4120} & \textbf{0.3890} & \textbf{0.4002} & \textbf{3.16\%} & \textbf{0.2487} & \textbf{0.4215} \\
+\hline
+\end{tabular}
+\end{table*}

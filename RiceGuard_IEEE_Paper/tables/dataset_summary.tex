@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Dataset Roles, Sample Counts, and Governance Access Policies}
+\label{tab:dataset_summary}
+\small
+\setlength{\tabcolsep}{14pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Sample Count} & \textbf{Classes} & \textbf{Training Allowed} \\
+\midrule
+RiceLeafDiseaseBD & Primary Training / Validation / Test & 7,060 & 6 & \textbf{Yes (Primary Benchmark)} \\
+RiceSeg5932 & Quantitative Explainability Ground Truth & 4,348 (Eligible) & 3 (Binary Masks) & \textbf{No (XAI Benchmark Only)} \\
+Sethy5932 & External Domain Shift Verification & 5,932 & 4 & \textbf{No (Locked Dataset)} \\
+RiceLeafDiseaseBD5 & External Field Diagnostic Verification & 5,932 & 5 & \textbf{No (Locked Dataset)} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+

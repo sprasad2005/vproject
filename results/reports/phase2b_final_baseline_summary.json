@@ -1,0 +1,99 @@
+{
+  "experiment": "phase2b_final_baseline",
+  "model_architecture": "EfficientNet-B0",
+  "dataset": "RiceLeafDiseaseBD (Primary)",
+  "hardware": {
+    "device": "cuda:0",
+    "gpu_name": "NVIDIA GeForce GTX 1650",
+    "total_vram_mb": 4095.69,
+    "peak_vram_mb": 814.52,
+    "amp_enabled": true
+  },
+  "training": {
+    "batch_size": 16,
+    "max_epochs": 20,
+    "completed_epochs": 18,
+    "best_epoch": 13,
+    "early_stopped": true,
+    "total_duration_minutes": 81.92,
+    "seed": 42,
+    "optimizer": "AdamW",
+    "initial_lr": 0.0001,
+    "scheduler": "CosineAnnealingLR"
+  },
+  "validation_metrics": {
+    "best_val_macro_f1": 0.8776,
+    "best_epoch": 13
+  },
+  "test_metrics": {
+    "accuracy": 0.9012,
+    "macro_precision": 0.8871,
+    "macro_recall": 0.8928,
+    "macro_f1": 0.8891
+  },
+  "per_class_results": {
+    "Healthy": {
+      "precision": 0.9262,
+      "recall": 0.9536,
+      "f1": 0.9397,
+      "support": 237
+    },
+    "Blast": {
+      "precision": 0.8565,
+      "recall": 0.8995,
+      "f1": 0.8775,
+      "support": 199
+    },
+    "Brown Spot": {
+      "precision": 0.9215,
+      "recall": 0.8257,
+      "f1": 0.871,
+      "support": 327
+    },
+    "Leaf Smut": {
+      "precision": 0.7565,
+      "recall": 0.7982,
+      "f1": 0.7768,
+      "support": 109
+    },
+    "Tungro": {
+      "precision": 0.8939,
+      "recall": 0.9496,
+      "f1": 0.9209,
+      "support": 337
+    },
+    "Sheath Blight": {
+      "precision": 0.9677,
+      "recall": 0.9302,
+      "f1": 0.9486,
+      "support": 258
+    }
+  },
+  "efficiency": {
+    "total_parameters": 4015234,
+    "trainable_parameters": 4015234,
+    "checkpoint_size_mb": 15.61,
+    "gpu_latency_mean_ms": 10.36,
+    "cpu_latency_mean_ms": 35.38,
+    "peak_gpu_memory_mb": 814.52
+  },
+  "reproducibility": {
+    "seed": 42,
+    "python_version": "3.11.9",
+    "pytorch_version": "2.6.0+cu124",
+    "numpy_version": "2.4.6",
+    "cuda_available": true,
+    "cuda_version": "12.4",
+    "cudnn_version": "90100",
+    "gpu_name": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "operating_system": "Windows 10 (10.0.26200)",
+    "platform_machine": "AMD64",
+    "platform_processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "external_data_governance": {
+    "Sethy5932_used": false,
+    "RiceLeafDiseaseBD5_used": false,
+    "RiceSeg5932_used": false
+  }
+}

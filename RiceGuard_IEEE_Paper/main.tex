@@ -1,0 +1,123 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% Standard IEEE packages
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{RiceGuard: Lesion-Grounded Multi-Task Deep Learning for Rice Leaf Disease Classification, Localization, and Quantitative Explainability}
+
+\author{
+\begin{tabular}[t]{c}
+\textbf{Varad Hiraman Parate, Dhruv A. Gholap, Hrushikesh Suryawanshi, and Arnav Kulkarni} \\
+Department of Information Technology \\
+Vishwakarma Institute of Information Technology \\
+Pune, Maharashtra, India \\
+\texttt{\{varad.22311382, dhruv.22311579, hrushikesh.22310354, arnav.22310597\}@viit.ac.in} \\[2.2ex]
+\textbf{Dr. Shalini Wankhade} \\
+Department of Information Technology \\
+Vishwakarma Institute of Technology \\
+Pune, Maharashtra, India \\
+\texttt{shalini.wankhade@vit.edu}
+\end{tabular}
+}
+
+\maketitle
+
+\input{sections/01_abstract.tex}
+\input{sections/02_keywords.tex}
+
+\input{sections/03_introduction.tex}
+\input{sections/04_related_work.tex}
+\input{sections/05_research_gap_contributions.tex}
+
+\input{tables/dataset_summary.tex}
+
+\input{sections/06_methodology.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/model_evolution_overview.png}
+\caption{Evolution of RiceGuard experimental architectures across experimental phases showing classification Macro F1 vs. localization lesion grounding and VRAM efficiency.}
+\label{fig:model_evolution}
+\end{figure*}
+
+\input{tables/training_configuration.tex}
+\input{tables/model_architecture.tex}
+
+\input{sections/07_experimental_setup.tex}
+\input{sections/08_results.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/classification_localization_tradeoff.png}
+\caption{Pareto trade-off between Disease Classification Macro F1 and Lesion Localization F1 across Phase 2B, Phase 3, and Phase 3B.}
+\label{fig:tradeoff}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/per_class_f1_comparison.png}
+\caption{Per-class F1-score comparison across 6 pathology categories for Phase 2B Baseline, Phase 3 Multi-Task, and Phase 3B Calibrated Multi-Task.}
+\label{fig:per_class}
+\end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/confusion_matrix_comparison.png}
+\caption{Normalized test set confusion matrices comparing Phase 2B Baseline (left), Phase 3 Multi-Task (center), and Phase 3B Refined Multi-Task (right).}
+\label{fig:confusion_matrices}
+\end{figure*}
+
+\input{tables/main_model_comparison.tex}
+\input{tables/per_class_results.tex}
+\input{tables/localization_results.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.90\textwidth]{figures/xai_grounding_summary.png}
+\caption{Quantitative explainability validation on RiceSeg5932 lesion masks: Attribution IoU, Energy Inside Mask (EIM), Pointing Game Accuracy, and Background Attribution Entropy.}
+\label{fig:xai_summary}
+\end{figure*}
+
+\input{tables/xai_results.tex}
+\input{tables/faithfulness_results.tex}
+\input{tables/statistical_results.tex}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.82\textwidth,height=0.48\textheight,keepaspectratio]{figures/failure_cases_baseline_vs_multitask.png}
+\caption{Representative diagnostic failure cases under severe background clutter and occlusion, comparing Phase 2B vs. Phase 3B predictions.}
+\label{fig:failure_cases}
+\end{figure*}
+
+\input{tables/reproducibility.tex}
+
+\input{sections/09_discussion.tex}
+\input{sections/10_limitations.tex}
+
+\FloatBarrier
+
+\input{sections/11_conclusion.tex}
+
+\FloatBarrier
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
+

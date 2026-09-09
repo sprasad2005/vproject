@@ -1,0 +1,74 @@
+{
+  "phase": "Phase 6",
+  "project": "RiceGuard",
+  "status": "COMPLETED_LOCALHOST_DEPLOYED",
+  "timestamp": "2026-09-09T15:08:00",
+  "application": {
+    "frontend_url": "http://127.0.0.1:5173",
+    "backend_url": "http://127.0.0.1:8000",
+    "api_docs_url": "http://127.0.0.1:8000/docs",
+    "frontend_stack": "React 18 + Vite 5 + Vanilla CSS Design System + Lucide Icons",
+    "backend_stack": "FastAPI + Uvicorn + PyTorch 2.6 + OpenCV + Pillow",
+    "cors_allowed_origins": [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173"
+    ]
+  },
+  "model_integration": {
+    "model_name": "RiceGuard Phase 3B",
+    "architecture": "EfficientNet-B0 Multi-Task",
+    "checkpoint_path": "experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/checkpoints/best_model.pt",
+    "decoding_config_path": "experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/calibration/selected_decoding_config.json",
+    "decoding_thresholds": {
+      "confidence_threshold": 0.6,
+      "top_k": 3
+    },
+    "hardware_target": "cuda:0 (NVIDIA GeForce GTX 1650)",
+    "fallback": "CPU"
+  },
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "purpose": "Dynamic hardware health and active device reporting"
+    },
+    {
+      "method": "GET",
+      "path": "/api/samples",
+      "purpose": "List available quick-test rice leaf disease sample keys"
+    },
+    {
+      "method": "GET",
+      "path": "/api/samples/{sample_id}",
+      "purpose": "Serve static test sample image bytes"
+    },
+    {
+      "method": "POST",
+      "path": "/api/predict",
+      "purpose": "Multi-task disease classification, bounding-box localization, and Grad-CAM generation"
+    }
+  ],
+  "verification": {
+    "total_unit_tests": 106,
+    "tests_passed": 106,
+    "phase6_tests_passed": 8,
+    "linter_status": "PASS (0 ruff errors)",
+    "browser_e2e_verified": true,
+    "live_inference_tested": [
+      {
+        "sample": "Blast Leaf",
+        "predicted_class": "Blast",
+        "confidence": 0.9809,
+        "lesions_detected": 3
+      },
+      {
+        "sample": "Healthy Leaf",
+        "predicted_class": "Healthy",
+        "confidence": 0.9559,
+        "lesions_detected": 0
+      }
+    ],
+    "previous_experiments_preserved": true,
+    "cloud_deployment_prevented": true
+  }
+}

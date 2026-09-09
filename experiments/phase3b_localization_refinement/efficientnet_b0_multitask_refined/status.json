@@ -1,0 +1,17 @@
+{
+  "status": "completed",
+  "best_epoch": 7,
+  "best_val_macro_f1": 0.8729,
+  "test_accuracy": 0.8896,
+  "test_macro_f1": 0.8751,
+  "test_localization_f1": 0.0905,
+  "test_mean_iou": 0.6423,
+  "test_healthy_fpr": 0.1097,
+  "frozen_decoding_config": {
+    "confidence_threshold": 0.6,
+    "top_k": 3,
+    "top_k_str": "3"
+  },
+  "total_training_time_s": 98.12,
+  "completed_at": "2026-09-09 13:01:46"
+}

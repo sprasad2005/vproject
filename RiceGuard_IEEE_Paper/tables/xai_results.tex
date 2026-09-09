@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Quantitative Explainability (XAI) Grounding Benchmark on Independent RiceSeg5932 Segmentation Masks}
+\label{tab:xai_results}
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{All Eligible Samples ($N=4,348$)}} & \multicolumn{3}{c}{\textbf{Mutually Correct Samples ($N=280$)}} & \multicolumn{2}{c}{\textbf{Correct Phase 3B Only ($N=468$)}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7} \cmidrule(lr){8-9}
+\textbf{Model} & \textbf{Energy In} & \textbf{Attr. IoU} & \textbf{Pointing} & \textbf{Energy In} & \textbf{Attr. IoU} & \textbf{Pointing} & \textbf{Pointing} & \textbf{Border Attn.} \\
+\midrule
+Phase 2B Baseline & \textbf{9.64\%} & \textbf{0.0864} & \textbf{29.58\%} & \textbf{9.73\%} & \textbf{0.0921} & 36.79\% & 32.69\% & 18.5\% \\
+Phase 3B Refined & 6.81\% & 0.0724 & 21.37\% & 8.13\% & 0.0864 & \textbf{38.21\%} & \textbf{36.32\%} & \textbf{9.2\%} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+

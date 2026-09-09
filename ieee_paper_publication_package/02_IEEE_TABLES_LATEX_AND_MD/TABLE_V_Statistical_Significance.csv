@@ -1,0 +1,5 @@
+Comparison_Hypothesis,Test_Type,Test_Statistic,P_Value,Significance
+Attribution IoU Gain (P3B vs P2B),Paired Student's t-test,t = 14.82,< 1e-12,Statistically Significant (p < 0.001)
+Energy Inside Mask (P3B vs P2B),Wilcoxon Signed-Rank Test,W = 4210.5,< 1e-10,Statistically Significant (p < 0.001)
+Classification F1 Invariance (P3B vs P2B),McNemar's Chi-Squared Test,chi2 = 1.18,0.2774,Not Significant (Preserved Invariance)
+Healthy FPR Reduction (P3B vs P3),Fisher's Exact Test,OR = 0.118,< 1e-6,Statistically Significant (p < 0.001)

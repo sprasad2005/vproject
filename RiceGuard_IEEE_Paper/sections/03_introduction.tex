@@ -1,0 +1,36 @@
+\section{Introduction}
+\label{sec:introduction}
+
+\IEEEPARstart{R}{ice} (\textit{Oryza sativa}) is a primary nutritional staple for over half of the global population. Agricultural yields are severely threatened by foliar diseases, notably Rice Blast, Brown Spot, Leaf Smut, Tungro, and Sheath Blight, which can cause substantial annual harvest losses when left unmanaged \cite{ref2, ref15}. Automated computer vision systems leveraging deep learning and convolutional neural networks (CNNs) have emerged as essential tools for scalable crop pathology recognition \cite{ref4, ref10, ref19}.
+
+\subsection{Limitation of Classification-Only Systems}
+Standard automated pathology recognition frameworks typically formulate disease identification as an image-level categorical classification task \cite{ref2, ref16, ref17}. While deep CNNs can achieve high accuracy on standardized benchmarks, classification-only architectures produce global category predictions without providing explicit spatial evidence locating individual lesion symptoms on the leaf surface. Consequently, such models risk learning dataset-specific background correlations, such as soil textures, lighting variations, or image boundary artifacts, rather than pathognomonic lesion morphology \cite{ref4, ref6}. When deployed under agricultural domain shifts, models relying on spurious correlations often experience performance degradation \cite{ref6, ref8}.
+
+\subsection{Localization and Explainability in Agricultural Deep Learning}
+To improve model interpretability and spatial awareness, researchers have explored post-hoc visual attribution techniques, such as Grad-CAM and SHAP \cite{ref4, ref5, ref7}, as well as dedicated object detection pipelines like YOLO architectures \cite{ref1, ref12}. However, post-hoc saliency maps are predominantly evaluated through qualitative visual inspection without rigorous quantitative validation against independent lesion ground truth \cite{ref4, ref7}. Conversely, dedicated object detectors optimize spatial bounding boxes but are rarely designed as controlled multi-task extensions of unified, lightweight classification backbones operating within low-power edge compute budgets \cite{ref1, ref3, ref14}.
+
+\subsection{Identified Research Gap}
+Synthesizing recent IEEE literature from 2024 to 2026 reveals a distinct research gap: existing agricultural disease frameworks primarily optimize either classification accuracy or spatial object detection in isolation, while explainability methods remain predominantly qualitative. There is a lack of controlled empirical investigations evaluating whether incorporating explicit bounding-box lesion supervision into a unified lightweight classification backbone can provide measurable spatial localization and reduce background shortcut reliance, and what fundamental classification-localization trade-offs emerge from joint multi-task optimization.
+
+\subsection{The RiceGuard Approach}
+To address this gap, this paper introduces \textbf{RiceGuard}, a controlled empirical framework built upon an EfficientNet-B0 backbone \cite{ref15}. RiceGuard investigates the integration of weak bounding-box lesion supervision alongside six-class pathology classification under strict data governance. The project evaluates:
+\begin{enumerate}
+    \item A controlled Phase 2B classification baseline.
+    \item A Phase 3 multi-task architecture with a $7\times 7$ grid localization head.
+    \item A Phase 3B refinement addressing class imbalance via positive loss weight capping and validation-only confidence decoding calibration ($\tau = 0.60$, Top-$K = 3$).
+    \item A quantitative XAI validation benchmarking Grad-CAM attributions against independent expert lesion segmentation masks from the RiceSeg5932 dataset.
+    \item A comprehensive statistical significance and reproducibility audit.
+\end{enumerate}
+
+\subsection{Primary Contributions}
+The verified scientific contributions of this study are:
+\begin{enumerate}
+    \item \textbf{Controlled Baseline and Multi-Task Comparison}: We establish a reproducible EfficientNet-B0 classification baseline (Phase 2B, 90.12\% accuracy, 0.8891 Macro F1) and systematically compare it against a lesion-grounded multi-task extension under identical data splits.
+    \item \textbf{Lightweight Grid-Based Localization Head}: We design and implement a compact $7\times 7$ spatial grid localization branch that adds lesion bounding-box prediction with only 2.95M additional parameters and 10.46 ms GPU latency.
+    \item \textbf{Imbalance Control and Calibration Procedure}: We demonstrate that capping objectness positive weights ($\text{pos\_weight}=10.00$) and performing validation-only decoding calibration reduces healthy leaf false positive rates by 49.0\% (from 21.52\% to 10.97\%) and improves Localization F1 from 0.0358 to 0.0905.
+    \item \textbf{Quantitative XAI Grounding and Shortcut Analysis}: We conduct quantitative explanation validation against 4,348 independent segmentation masks, demonstrating reduced border attention (18.5\% to 9.2\%) and directional Pointing Game improvement on correctly classified samples (38.21\% vs. 36.79\%).
+    \item \textbf{Transparent Trade-Off and Reproducibility Reporting}: We provide an evidence-grounded analysis showing that while spatial localization capability is gained, classification Macro F1 exhibits a slight trade-off (0.8891 to 0.8751), supported by an audited, fully reproducible artifact suite.
+\end{enumerate}
+
+\subsection{Paper Organization}
+The remainder of this paper is organized as follows: Section \ref{sec:related_work} reviews related IEEE literature. Section \ref{sec:research_gap} outlines the study objectives and research questions. Section \ref{sec:materials_methods} details the dataset governance, baseline, multi-task architecture, and refinement procedures. Section \ref{sec:setup_metrics} presents the experimental setup and evaluation metrics. Section \ref{sec:results} reports classification, localization, XAI, and statistical findings. Section \ref{sec:discussion} discusses the scientific implications and limitations, and Section \ref{sec:conclusion} concludes the paper.

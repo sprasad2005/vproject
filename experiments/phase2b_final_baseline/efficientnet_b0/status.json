@@ -1,0 +1,8 @@
+{
+  "status": "completed",
+  "completed_epochs": 18,
+  "best_epoch": 13,
+  "best_val_macro_f1": 0.8776,
+  "total_training_minutes": 81.92,
+  "early_stopped": true
+}

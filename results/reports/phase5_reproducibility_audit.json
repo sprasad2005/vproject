@@ -1,0 +1,146 @@
+{
+  "audit_timestamp": "2026-09-09T14:15:31.726270",
+  "environment": {
+    "python_version": "3.11.9",
+    "pytorch_version": "2.6.0+cu124",
+    "torchvision_version": "0.21.0+cu124",
+    "cuda_available": true,
+    "cuda_version": "12.4",
+    "cudnn_version": 90100,
+    "gpu_name": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "operating_system": "Windows 10 (10.0.26200)",
+    "machine_architecture": "AMD64",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "random_seed": 42
+  },
+  "governance": {
+    "primary_dataset": "RiceLeafDiseaseBD",
+    "training_allowed_primary": true,
+    "external_sethy_locked": true,
+    "external_bd5_locked": true,
+    "riceseg_xai_only": true,
+    "status": "COMPLIANT_STRICT"
+  },
+  "total_audited_artifacts": 23,
+  "verified_intact_count": 23,
+  "missing_count": 0,
+  "artifact_hashes": {
+    "results/reports/phase2a_screening_comparison.csv": {
+      "sha256": "525fbdf6a8e84d0c9a8adf8bf4bf2ddf3a776247707fcc62f1e7489d9bd6c939",
+      "exists": true,
+      "size_bytes": 297
+    },
+    "results/reports/phase2a_screening_summary.json": {
+      "sha256": "9e6cc288107a6bebc4dcb235548f2046876edce38ec3be1e9e5ece8495587225",
+      "exists": true,
+      "size_bytes": 2098
+    },
+    "experiments/phase2b_final_baseline/efficientnet_b0/checkpoints/best_model.pt": {
+      "sha256": "9f819b9b134d1058c3ebced800ced674d1ed536393d53c21843f9ce1943eb0da",
+      "exists": true,
+      "size_bytes": 48673509
+    },
+    "experiments/phase2b_final_baseline/efficientnet_b0/training_history.csv": {
+      "sha256": "f4ca6351bfeb20ae9ac173703c58c76a0ede85d811b9dbad02ea6110ad530e9b",
+      "exists": true,
+      "size_bytes": 2069
+    },
+    "results/reports/phase2b_final_baseline_summary.json": {
+      "sha256": "b8b745d56932fc44de55cc26cdac1a5650246818f156818a49a2a3ebfff93f5f",
+      "exists": true,
+      "size_bytes": 2449
+    },
+    "results/reports/phase2b_final_baseline_summary.md": {
+      "sha256": "f36551d4eeb79b50302f9a63267161b8ba99907a9e892a17e8b53fb2ee11efe9",
+      "exists": true,
+      "size_bytes": 3050
+    },
+    "experiments/phase3_lesion_aware/efficientnet_b0_multitask/checkpoints/best_model.pt": {
+      "sha256": "df38e81544506a5ed9e61525a3c0bc22c515ed714b97c4a86e21ae3c0a53a81e",
+      "exists": true,
+      "size_bytes": 84084690
+    },
+    "experiments/phase3_lesion_aware/efficientnet_b0_multitask/training_history.csv": {
+      "sha256": "2350a86d3bf7b82a32fd273e2f9b5d3cc0e23e552f713e4ee4e3ecaf8e55c92c",
+      "exists": true,
+      "size_bytes": 1628
+    },
+    "results/reports/phase3_lesion_aware_summary.json": {
+      "sha256": "f84e9a6afd1bbefea4250d9488384bf918ef6c69f05fdc02390bd231c521e723",
+      "exists": true,
+      "size_bytes": 5720
+    },
+    "results/reports/phase3_lesion_aware_summary.md": {
+      "sha256": "fe4490539509774c850d177aa5f8b867283e06f73d4399561fe49f2abb8caa11",
+      "exists": true,
+      "size_bytes": 4027
+    },
+    "experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/checkpoints/best_model.pt": {
+      "sha256": "1569b1c833068b5b2fcbee1468dab7f169b9cd755880847c8c2589314c448d0d",
+      "exists": true,
+      "size_bytes": 28170798
+    },
+    "experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/training_history.csv": {
+      "sha256": "82ba147e404f1f703e4c3bade723d5d4de4a026c29c4ff4888e45e8469fcc857",
+      "exists": true,
+      "size_bytes": 2692
+    },
+    "results/reports/phase3b_localization_refinement_summary.json": {
+      "sha256": "19b4085eeb77a5cd364fa88c4663c27f2839736826f5a3f9d67a914df6822a81",
+      "exists": true,
+      "size_bytes": 5632
+    },
+    "results/reports/phase3b_localization_refinement_summary.md": {
+      "sha256": "e4a5acb5da70def0e22ab303603ae6305d47e9163a18d6e9c2eaec16c9214b83",
+      "exists": true,
+      "size_bytes": 4192
+    },
+    "results/reports/phase2b_vs_phase3_vs_phase3b_comparison.csv": {
+      "sha256": "52e21181005ee500af1071dbcae3814b35e90c0e42a579afeaa6647ee419a94d",
+      "exists": true,
+      "size_bytes": 801
+    },
+    "experiments/phase4_xai/phase4_per_sample_grounding.csv": {
+      "sha256": "147c3b197eb061c9d251e50c4f1fb17ee8ed6b154f79a3fd706019fb9e331c8f",
+      "exists": true,
+      "size_bytes": 2183675
+    },
+    "results/reports/phase4_xai_summary.json": {
+      "sha256": "91609ae642ea8973f7019d65205c81e15a733ae51787d06b16f290acfd3b837a",
+      "exists": true,
+      "size_bytes": 11668
+    },
+    "results/reports/phase4_xai_summary.md": {
+      "sha256": "02595c85b70aa11ae813eb82c50ec88ab3d4f7493f1e848a4219cbafb030b04f",
+      "exists": true,
+      "size_bytes": 3220
+    },
+    "results/reports/phase4_xai_model_comparison.csv": {
+      "sha256": "abfac8ba3b334124d1e2e883e436c32b6957ec7f5925e5f6439e3fd24bf883cb",
+      "exists": true,
+      "size_bytes": 1769
+    },
+    "results/reports/phase4_statistical_comparison.csv": {
+      "sha256": "040c4d153f39919998735f414c0a61c91c593740614505d8216d24d8b873f8dd",
+      "exists": true,
+      "size_bytes": 2077
+    },
+    "results/reports/phase4_faithfulness_results.csv": {
+      "sha256": "ac3b6a216c0e294c7f62a740f8b822c0cc565bb18061debac6a420c2a71a7f27",
+      "exists": true,
+      "size_bytes": 438
+    },
+    "results/reports/phase4_per_class_xai_metrics.csv": {
+      "sha256": "a25d870bea4f6de270ad4315e2b559d193994132db0937a384a614f9148dc365",
+      "exists": true,
+      "size_bytes": 1018
+    },
+    "results/reports/phase4_dataset_alignment_report.json": {
+      "sha256": "2396b8f3d6cf512abcaa0dad55a960b6c042cf633f06ec1596abe04bfdc2585b",
+      "exists": true,
+      "size_bytes": 546
+    }
+  },
+  "audit_verdict": "PASSED_FULLY_REPRODUCIBLE"
+}

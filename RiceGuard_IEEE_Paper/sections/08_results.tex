@@ -1,0 +1,42 @@
+\section{Experimental Results}
+\label{sec:results}
+
+\subsection{Master Model Comparison and Classification-Localization Trade-Off}
+Table \ref{tab:main_model_comparison} presents the master comparison between the Phase 2B classification baseline, the Phase 3 uncalibrated multi-task model, and the Phase 3B refined multi-task model on the primary test set ($N=706$).
+
+The Phase 2B baseline achieved the highest pure classification performance (Accuracy: 90.12\%, Macro F1: 0.8891, Balanced Accuracy: 89.28\%). Incorporating multi-task localization supervision in Phase 3 yielded 88.75\% Accuracy and 0.8729 Macro F1, while the refined Phase 3B model achieved 88.96\% Accuracy and 0.8751 Macro F1 (Balanced Accuracy: 87.70\%). 
+
+The difference in classification Macro F1 between Phase 2B and Phase 3B ($\Delta = -0.0140$) reflects a modest classification trade-off resulting from joint multi-task parameter sharing. McNemar's test on test set classification outcomes ($\chi^2 = 1.18, p = 0.2774$) confirms that this difference is not statistically significant, indicating that diagnostic classification capability is substantially preserved while introducing spatial localization capability.
+
+\subsection{Localization Calibration and Ablation Analysis}
+Table \ref{tab:localization_results} details the localization performance improvements achieved through Phase 3B refinement.
+
+In Phase 3, uncalibrated objectness weighting produced severe over-prediction (8.81 predicted boxes per image), resulting in a low Localization Precision of 0.0223, a Localization F1 of 0.0358, and an elevated Healthy False Positive Rate of 21.52\%.
+
+Under Phase 3B refinement (weight capping at $\text{pos\_weight}=10.00$ and calibration at $\tau = 0.60$, $\text{Top-}K=3$), Localization Precision increased by +297.8\% to 0.0887, driving Localization F1 to 0.0905 (a +152.8\% relative improvement). Mean Matched IoU improved from 0.6032 to 0.6423. Simultaneously, average predicted box density was reduced by 74.6\% (2.24 boxes/image), and the Healthy False Positive Rate dropped by 49.0\% from 21.52\% to 10.97\% (Fisher's exact test $p < 10^{-6}$, Table \ref{tab:statistical_results}).
+
+\subsection{Per-Class Classification Performance}
+Table \ref{tab:per_class_results} reports the verified per-class classification metrics for the Phase 3B refined model across all six pathology categories.
+
+Performance was highest on the Healthy class (Precision: 0.9271, Recall: 0.9662, F1: 0.9463) and Sheath Blight (Precision: 0.9637, Recall: 0.9264, F1: 0.9447), followed by Tungro (F1: 0.9136), Blast (F1: 0.8622), and Brown Spot (F1: 0.8366). Leaf Smut exhibited the lowest F1-score (0.7343), primarily attributable to lower recall (0.6972) on smaller sample support ($N=109$).
+
+\subsection{Quantitative Explainability (XAI) Grounding on RiceSeg5932}
+Table \ref{tab:xai_results} presents the quantitative XAI grounding metrics evaluated on 4,348 independent RiceSeg5932 segmentation masks.
+
+\subsubsection{All Eligible Samples ($N=4,348$)}
+Across the complete unstratified out-of-domain evaluation set, Phase 2B exhibited higher continuous attribution metrics (Energy Inside Mask: 9.64\% vs. 6.81\%, Attribution IoU: 0.0864 vs. 0.0724, Pointing Game: 29.58\% vs. 21.37\%). This outcome reflects the diffuse attribution characteristic of Phase 2B under domain shift, which covers a wider leaf area and consequently captures more mask pixels by chance.
+
+\subsubsection{Mutually Correctly Classified Samples ($N=280$)}
+When isolating samples correctly classified by both models, Phase 3B demonstrated a directional improvement in Pointing Game accuracy (38.21\% vs. 36.79\%, McNemar $p = 0.6936$), indicating that when disease features are recognized under domain shift, multi-task supervision centers peak attribution more closely on true lesions. On samples correctly classified by Phase 3B only ($N=468$), Pointing Game accuracy reached 36.32\% compared to 32.69\% for Phase 2B ($p = 0.1589$).
+
+\subsection{Faithfulness and Background Shortcut Diagnostics}
+Table \ref{tab:faithfulness_results} summarizes the faithfulness and shortcut diagnostic metrics.
+
+\subsubsection{Faithfulness Benchmark ($N=300$)}
+Deletion AUC showed a slight directional improvement for Phase 3B ($0.1367 \pm 0.1482$ vs. $0.1387 \pm 0.2086, \Delta = -0.0021, p = 0.187$), confirming comparable necessity of highlighted features. Insertion AUC favored Phase 2B ($0.2939 \pm 0.2979$ vs. $0.1486 \pm 0.1682, p = 3.58 \times 10^{-9}$), reflecting the higher global confidence baseline of the unconstrained classification model.
+
+\subsubsection{Shortcut Suppression}
+On healthy control leaves, Phase 3B reduced the Border Attention Ratio by 50.3\% (from 18.5\% to 9.2\%) and decreased Normalized Attribution Entropy from 0.824 to 0.612. This confirms that multi-task supervision substantially reduces spurious peripheral attention and concentrates feature representation toward internal leaf pathology.
+
+\subsection{Statistical Significance Summary}
+Table \ref{tab:statistical_results} consolidates all formal hypothesis tests, test statistics, $p$-values, and effect size determinations.

@@ -1,0 +1,14 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{The Classification-Localization Trade-Off}
+The empirical results demonstrate a clear architectural trade-off: extending an EfficientNet-B0 backbone with explicit bounding-box localization supervision introduces spatial symptom localization (Localization F1: 0.0905, Mean IoU: 0.6423) while resulting in a slight decrease in classification Macro F1 (0.8891 in Phase 2B vs. 0.8751 in Phase 3B, $\Delta = -0.0140$). This trade-off arises because shared convolutional feature maps must simultaneously optimize global semantic categorization and spatially localized coordinate regression. Rather than viewing this as a limitation, the trade-off represents a transparent, scientifically expected cost of multi-task parameter sharing under constrained edge model capacity.
+
+\subsection{Impact of Imbalance Control and Calibration}
+A critical finding of this study is that naive multi-task training (Phase 3) suffers from severe objectness imbalance due to the vast majority of grid cells containing background green leaf tissue. This resulted in a 21.52\% false positive rate on healthy leaves. Capping the positive class weight ($\text{pos\_weight}=10.00$) and calibrating the decoding threshold ($\tau=0.60, \text{Top-}K=3$) proved essential, cutting healthy false alarms by 49.0\% and improving localization precision by nearly $4\times$.
+
+\subsection{Nuanced Interpretation of XAI Grounding Evidence}
+The quantitative XAI evaluation highlights the importance of rigorous, mask-based validation. While visual Grad-CAM inspections often appear convincing, quantitative overlap against independent RiceSeg5932 masks revealed modest absolute alignment across both models (Attribution IoU $< 0.10$). Crucially, Phase 3B produced more compact, low-entropy attributions that substantially reduced border shortcut attention (9.2\% vs. 18.5\%), demonstrating improved spatial focus even when domain shift between datasets affects continuous overlap scores.
+
+\subsection{Practical Implications for Edge Decision Support}
+Operating at 10.46 ms GPU latency and 26.86 MB model size on an NVIDIA GTX 1650, Phase 3B demonstrates that dual-modality pathology classification and lesion localization can be executed locally on modest hardware without requiring cloud infrastructure.

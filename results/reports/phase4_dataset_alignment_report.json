@@ -1,0 +1,20 @@
+{
+  "dataset_name": "RiceSeg5932",
+  "governance_policy": "xai_ground_truth_only",
+  "total_raw_pairs": 5932,
+  "eligible_samples": 4348,
+  "excluded_samples": 1584,
+  "eligible_class_distribution": {
+    "Healthy": 0,
+    "Blast": 1440,
+    "Brown Spot": 1600,
+    "Leaf Smut": 0,
+    "Tungro": 1308,
+    "Sheath Blight": 0
+  },
+  "exclusion_reasons": {
+    "Class 'Bacterial Blight' is not among 6 canonical primary classes.": 1584
+  },
+  "audit_timestamp": "2026-09-09T13:34:52.973420",
+  "audit_status": "PASSED_VERIFIED"
+}

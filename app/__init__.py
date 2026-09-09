@@ -1,0 +1,1 @@
+"""RiceGuard Localhost Application Package."""

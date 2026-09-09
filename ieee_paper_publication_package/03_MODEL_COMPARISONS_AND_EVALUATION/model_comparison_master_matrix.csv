@@ -1,0 +1,6 @@
+Model,Phase,Params_M,VRAM_MB,Epoch_Time_s,Test_Macro_F1,Test_Acc,Loc_F1,Attr_IoU,Healthy_FPR,Edge_Fit
+ResNet-50,2A,25.56,1480,42.1,0.8521,0.8601,N/A,N/A,N/A,Poor
+ViT-B/16,2A,86.57,3210,118.4,0.8305,0.8412,N/A,N/A,N/A,Infeasible
+EfficientNet-B0 (Classif),2B,5.29,890,24.6,0.8891,0.8942,N/A,0.1421,N/A,Good
+EfficientNet-B0 (MT-Uncalib),3,5.35,1120,31.2,0.8729,0.8783,0.0358,0.1890,21.52%,Moderate
+EfficientNet-B0 (RiceGuard Refined),3B,5.35,1120,31.2,0.8814,0.8867,0.4002,0.2487,3.16%,Optimal

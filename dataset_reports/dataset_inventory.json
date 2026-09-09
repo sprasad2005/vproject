@@ -1,0 +1,115 @@
+{
+  "project_name": "RiceGuard",
+  "phase": "Phase 0 \u2014 Research Foundation, Reproducibility Setup, and Existing Dataset Registration",
+  "datasets": {
+    "primary": {
+      "name": "RiceLeafDiseaseBD",
+      "role": "primary_training",
+      "training_allowed": true,
+      "detected_root": "RiceLeafDiseaseBD A Field-Based Annotated Smartpho",
+      "status": "DISCOVERED",
+      "total_files": 26182,
+      "total_images": 9769,
+      "image_formats": [
+        ".jpg"
+      ],
+      "classes": {
+        "Blast": 1326,
+        "Brown spot": 2178,
+        "Healthy": 1575,
+        "Leaf smut": 724,
+        "Rice Tungro": 2244,
+        "Sheath blight": 1722
+      },
+      "bounding_boxes": {
+        "available": true,
+        "format": "YOLO (.txt)",
+        "total_annotation_files": 8194,
+        "classes_with_annotations": {
+          "Blast": 1326,
+          "Brown spot": 2178,
+          "Leaf smut": 724,
+          "Rice Tungro": 2244,
+          "Sheath blight": 1722
+        }
+      },
+      "metadata_files": [
+        "RiceLeafDiseaseBD A Field-Based Annotated Smartpho/RiceLeafDiseaseBD A Field-Based Annotated Smartpho/Dataset metadata.xlsx",
+        "RiceLeafDiseaseBD A Field-Based Annotated Smartpho/RiceLeafDiseaseBD A Field-Based Annotated Smartpho/RiceLeafDiseaseBD/Dataset metadata.xlsx",
+        "RiceLeafDiseaseBD A Field-Based Annotated Smartpho/RiceLeafDiseaseBD A Field-Based Annotated Smartpho/Annotation_Protocol.pdf"
+      ],
+      "issues": []
+    },
+    "sethy": {
+      "name": "Sethy5932",
+      "role": "external_test",
+      "training_allowed": false,
+      "detected_root": "Rice Leaf Disease Image Samples",
+      "status": "DISCOVERED",
+      "total_images": 5932,
+      "image_formats": [
+        ".jpg"
+      ],
+      "classes": {
+        "Bacterialblight": 1584,
+        "Blast": 1440,
+        "Brownspot": 1600,
+        "Tungro": 1308
+      },
+      "archive_path": "Rice Leaf Disease Image Samples/Rice Leaf Disease Image Samples/Rice Leaf Disease Images.7z",
+      "issues": []
+    },
+    "bd5": {
+      "name": "RiceLeafDiseaseBD5",
+      "role": "external_field_test",
+      "training_allowed": false,
+      "detected_root": "RiceLeafDisease-BD5 A Field-Collected Five-Class I",
+      "status": "DISCOVERED",
+      "total_images": 3150,
+      "image_formats": [
+        ".jpg"
+      ],
+      "classes": {
+        "Blast": 720,
+        "Narrow_Brown_Spot": 476,
+        "Normal_Leaf": 834,
+        "Sheath_Blight": 626,
+        "Tungro": 494
+      },
+      "archive_path": "RiceLeafDisease-BD5 A Field-Collected Five-Class I/RiceLeafDisease-BD5 A Field-Collected Five-Class I/RiceLeafDisease-BD5.rar",
+      "issues": []
+    },
+    "riceseg": {
+      "name": "RiceSeg5932",
+      "role": "xai_ground_truth",
+      "training_allowed": false,
+      "detected_root": "RiceSeg-5932 Complete Pixel-Level Segmentation Mas",
+      "status": "DISCOVERED",
+      "total_masks": 5932,
+      "mask_formats": [
+        ".jpg"
+      ],
+      "classes": {
+        "Bacterialblight": 1584,
+        "Blast": 1440,
+        "Brownspot": 1600,
+        "Tungro": 1308
+      },
+      "pairing_verification": {
+        "total_masks": 5932,
+        "total_candidate_images": 5932,
+        "matched_image_mask_pairs": 5932,
+        "unmatched_images": 0,
+        "unmatched_masks": 0,
+        "pairing_possible": true
+      },
+      "issues": []
+    }
+  },
+  "summary": {
+    "primary_detected": true,
+    "sethy_detected": true,
+    "bd5_detected": true,
+    "riceseg_detected": true
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "seed": 42,
+  "device": "cuda",
+  "phase2b_checkpoint": "D:\\vproj\\experiments\\phase2b_final_baseline\\efficientnet_b0\\checkpoints\\best_model.pt",
+  "phase3b_checkpoint": "D:\\vproj\\experiments\\phase3b_localization_refinement\\efficientnet_b0_multitask_refined\\checkpoints\\best_model.pt",
+  "dataset_manifest": "D:\\vproj\\data\\processed\\manifests\\riceseg_manifest.csv",
+  "top_percent_iou": 20,
+  "faithfulness_samples": 300,
+  "timestamp": "2026-09-09T13:49:31.866847"
+}

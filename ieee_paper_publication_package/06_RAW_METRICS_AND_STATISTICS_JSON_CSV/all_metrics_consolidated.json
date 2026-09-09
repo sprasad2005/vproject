@@ -1,0 +1,89 @@
+{
+  "project": "RiceGuard \u2014 Lesion-Grounded Rice Leaf Pathology AI",
+  "selected_model": "Phase 3B EfficientNet-B0 Calibrated Multi-Task",
+  "dataset_splits": {
+    "train_samples": 2824,
+    "val_samples": 706,
+    "test_samples": 706,
+    "classes": [
+      "Healthy",
+      "Blast",
+      "Brown Spot",
+      "Leaf Smut",
+      "Tungro",
+      "Sheath Blight"
+    ]
+  },
+  "phase2a_screening": {
+    "ResNet-50": {
+      "params_m": 25.56,
+      "vram_mb": 1480,
+      "val_f1": 0.8654,
+      "test_f1": 0.8521
+    },
+    "ViT-B/16": {
+      "params_m": 86.57,
+      "vram_mb": 3210,
+      "val_f1": 0.842,
+      "test_f1": 0.8305
+    },
+    "EfficientNet-B0": {
+      "params_m": 5.29,
+      "vram_mb": 890,
+      "val_f1": 0.8987,
+      "test_f1": 0.8891
+    }
+  },
+  "phase_comparison": {
+    "phase2b_baseline": {
+      "macro_f1": 0.8891,
+      "accuracy": 0.8942,
+      "attr_iou": 0.1421,
+      "eim": 0.2643,
+      "deletion_auc": 0.3842,
+      "insertion_auc": 0.6128
+    },
+    "phase3_uncalibrated": {
+      "macro_f1": 0.8729,
+      "accuracy": 0.8783,
+      "loc_f1": 0.0358,
+      "healthy_fpr": 0.2152,
+      "attr_iou": 0.189,
+      "eim": 0.3312
+    },
+    "phase3b_selected": {
+      "macro_f1": 0.8814,
+      "accuracy": 0.8867,
+      "loc_f1": 0.4002,
+      "loc_prec": 0.412,
+      "loc_rec": 0.389,
+      "mean_iou": 0.6845,
+      "healthy_fpr": 0.0316,
+      "attr_iou": 0.2487,
+      "eim": 0.4215,
+      "pointing_game": 0.7641,
+      "deletion_auc": 0.2451,
+      "insertion_auc": 0.7684
+    }
+  },
+  "statistical_tests": {
+    "attribution_iou": {
+      "t_stat": 14.82,
+      "p_val": 1.2e-14,
+      "cohens_d": 0.842
+    },
+    "energy_inside_mask": {
+      "wilcoxon_w": 4210.5,
+      "p_val": 3.4e-11,
+      "cohens_d": 0.915
+    },
+    "mcnemar_classification_invariance": {
+      "chi2": 1.18,
+      "p_val": 0.2774
+    },
+    "healthy_fpr_reduction": {
+      "odds_ratio": 0.118,
+      "p_val": 4.1e-07
+    }
+  }
+}

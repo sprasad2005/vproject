@@ -1,0 +1,16 @@
+stratum,metric,test_type,statistic,p_value,mean_difference,effect_size,is_significant
+all_samples,Energy Inside Mask,Paired Wilcoxon Signed-Rank,1740917.0,5.117083646810562e-285,-0.028302053862996102,-0.49127498646105966,True
+all_samples,Attribution IoU (Top 20%),Paired Wilcoxon Signed-Rank,1955501.0,9.593654835316958e-95,-0.01398563956983636,-0.2552415956418096,True
+all_samples,Pointing Game Accuracy,McNemar Test,131.06101344364012,0.0,-0.08210671573137074,,True
+correct_2b_only,Energy Inside Mask,Paired Wilcoxon Signed-Rank,24007.0,1.025889428616255e-146,-0.04842867734788383,-0.9041423168165842,True
+correct_2b_only,Attribution IoU (Top 20%),Paired Wilcoxon Signed-Rank,56303.0,1.4585979393289071e-95,-0.03414635642418772,-0.6940114861752382,True
+correct_2b_only,Pointing Game Accuracy,McNemar Test,62.56333333333333,2.55351295663786e-15,-0.13018867924528302,,True
+correct_3b_only,Energy Inside Mask,Paired Wilcoxon Signed-Rank,29710.0,8.26497548570644e-18,-0.012929955519783062,-0.22700861355008126,True
+correct_3b_only,Attribution IoU (Top 20%),Paired Wilcoxon Signed-Rank,36496.0,0.023301575767994465,-0.003039284309028107,-0.04872458425147992,True
+correct_3b_only,Pointing Game Accuracy,McNemar Test,1.9844961240310077,0.1589175496852293,0.03632478632478631,,False
+correct_both,Energy Inside Mask,Paired Wilcoxon Signed-Rank,2724.0,7.883879281990444e-36,-0.015992733351172295,-0.7767271747470349,True
+correct_both,Attribution IoU (Top 20%),Paired Wilcoxon Signed-Rank,8495.0,3.2318535093961354e-06,-0.00574401648191741,-0.26320278425318316,True
+correct_both,Pointing Game Accuracy,McNemar Test,0.15517241379310345,0.6936406217837585,0.014285714285714235,,False
+incorrect_any,Energy Inside Mask,Paired Wilcoxon Signed-Rank,1565868.0,2.206309073873033e-258,-0.02914930306243333,-0.49221406598838335,True
+incorrect_any,Attribution IoU (Top 20%),Paired Wilcoxon Signed-Rank,1708362.0,7.777684906962093e-90,-0.014552909595553495,-0.25841954366208697,True
+incorrect_any,Pointing Game Accuracy,McNemar Test,142.5742574257426,0.0,-0.08874139626352015,,True

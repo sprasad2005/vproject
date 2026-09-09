@@ -1,0 +1,97 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments & node_modules
+.venv/
+venv/
+ENV/
+env/
+node_modules/
+app/frontend/node_modules/
+app/frontend/dist/
+
+# Caches
+.pytest_cache/
+.ruff_cache/
+
+# Environment variables
+.env
+.env.local
+
+# IDE and Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating System files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Large raw datasets and zip archives
+*.zip
+*.7z
+*.tar.gz
+!RiceGuard_IEEE_Paper.zip
+Rice Leaf Disease Image Samples/
+RiceLeafDisease-BD5 A Field-Collected Five-Class I/
+RiceLeafDiseaseBD A Field-Based Annotated Smartpho/
+RiceSeg-5932 Complete Pixel-Level Segmentation Mas/
+
+# Datasets - Raw data files (retain folder structure & manifests)
+data/primary/**/raw/*
+!data/primary/**/raw/.gitkeep
+data/external/**/raw/*
+!data/external/**/raw/.gitkeep
+data/xai_ground_truth/**/raw/*
+!data/xai_ground_truth/**/raw/.gitkeep
+
+# Checkpoints and Model Weights (keep manifest/reports, ignore >100MB binaries if any)
+*.pth
+*.pt
+*.onnx
+checkpoints/*.pth
+checkpoints/*.pt
+checkpoints/*.onnx
+!checkpoints/.gitkeep
+experiments/*/checkpoints/
+
+# Logs and TensorBoard runs
+logs/*.log
+logs/events.*
+!logs/.gitkeep
+
+# Dynamic experiment outputs
+experiments/*/logs/
+!experiments/.gitkeep
+
+

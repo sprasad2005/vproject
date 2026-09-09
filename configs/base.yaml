@@ -1,0 +1,22 @@
+project:
+  name: RiceGuard
+  version: 0.1.0
+  description: "Lesion-Grounded Explainable and Uncertainty-Aware Deep Learning Framework for Rice Leaf Disease Classification"
+
+seed: 42
+
+device:
+  use_cuda: true
+  cuda_device_id: 0
+  benchmark: false
+  deterministic: true
+
+experiment:
+  name: default
+  save_dir: experiments
+  tag: baseline
+
+logging:
+  level: INFO
+  log_to_file: true
+  log_to_console: true

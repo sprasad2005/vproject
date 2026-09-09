@@ -1,0 +1,12 @@
+{
+  "status": "completed",
+  "best_epoch": 4,
+  "best_val_macro_f1": 0.8598,
+  "test_accuracy": 0.8875,
+  "test_macro_f1": 0.8729,
+  "test_localization_f1": 0.0358,
+  "test_mean_iou": 0.6032,
+  "test_healthy_fpr": 0.2152,
+  "total_training_time_s": 3805.97,
+  "completed_at": "2026-09-09 10:21:29"
+}

@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\caption{Master Experimental Comparison: Classification Performance and Localization Capability}
+\label{tab:main_model_comparison}
+\small
+\setlength{\tabcolsep}{8pt}
+\begin{tabular}{llccccccc}
+\toprule
+\textbf{Model} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Balanced Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Recall} & \textbf{Loc. F1} & \textbf{Mean IoU} \\
+\midrule
+Phase 2B & Classification-Only & \textbf{90.12\%} & \textbf{0.8891} & \textbf{89.28\%} & -- & -- & -- & -- \\
+Phase 3 & Multi-Task (Uncalibrated) & 88.75\% & 0.8729 & 87.42\% & 0.0223 & 0.0914 & 0.0358 & 0.6032 \\
+Phase 3B & Multi-Task (Calibrated) & 88.96\% & 0.8751 & 87.70\% & \textbf{0.0887} & \textbf{0.0924} & \textbf{0.0905} & \textbf{0.6423} \\
+\bottomrule
+\end{tabular}
+\end{table*}
+

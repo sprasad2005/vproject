@@ -1,0 +1,252 @@
+{
+  "model_name": "efficientnet_b0_multitask",
+  "backbone": "efficientnet_b0",
+  "phase": "phase3b",
+  "experiment_type": "lesion_aware_multitask_refinement",
+  "best_epoch": 7,
+  "best_val_macro_f1": 0.8729,
+  "pos_weight_calculated": 22.9005,
+  "pos_weight_effective": 10.0,
+  "selected_decoding_config": {
+    "confidence_threshold": 0.6,
+    "top_k": 3,
+    "top_k_str": "3"
+  },
+  "test_metrics": {
+    "loss_total": 0.5911,
+    "loss_cls": 0.4654,
+    "loss_loc": 0.5031,
+    "accuracy": 0.8896,
+    "balanced_accuracy": 0.877,
+    "macro_precision": 0.8737,
+    "macro_recall": 0.877,
+    "macro_f1": 0.8751,
+    "weighted_f1": 0.8901,
+    "per_class": {
+      "Healthy": {
+        "precision": 0.9283,
+        "recall": 0.9565,
+        "f1": 0.9422,
+        "support": 230
+      },
+      "Blast": {
+        "precision": 0.8794,
+        "recall": 0.8621,
+        "f1": 0.8706,
+        "support": 203
+      },
+      "Brown Spot": {
+        "precision": 0.8257,
+        "recall": 0.8464,
+        "f1": 0.8359,
+        "support": 319
+      },
+      "Leaf Smut": {
+        "precision": 0.7156,
+        "recall": 0.7573,
+        "f1": 0.7358,
+        "support": 103
+      },
+      "Tungro": {
+        "precision": 0.9318,
+        "recall": 0.9075,
+        "f1": 0.9195,
+        "support": 346
+      },
+      "Sheath Blight": {
+        "precision": 0.9612,
+        "recall": 0.9323,
+        "f1": 0.9466,
+        "support": 266
+      }
+    }
+  },
+  "localization_metrics": {
+    "iou_threshold": 0.5,
+    "total_images": 1467,
+    "total_gt_boxes": 3150,
+    "total_pred_boxes": 3279,
+    "true_positives": 291,
+    "false_positives": 2988,
+    "false_negatives": 2859,
+    "localization_precision": 0.0887,
+    "localization_recall": 0.0924,
+    "localization_f1": 0.0905,
+    "mean_matched_iou": 0.6423,
+    "healthy_evaluation": {
+      "healthy_images_total": 237,
+      "healthy_images_with_detections": 26,
+      "healthy_false_positive_rate": 0.1097,
+      "healthy_total_false_boxes": 46
+    },
+    "per_class_localization": {
+      "Blast": {
+        "total_gt_boxes": 703,
+        "total_pred_boxes": 539,
+        "tp": 13,
+        "fp": 526,
+        "fn": 690,
+        "precision": 0.0241,
+        "recall": 0.0185,
+        "f1": 0.0209,
+        "mean_iou": 0.5515
+      },
+      "Brown Spot": {
+        "total_gt_boxes": 1384,
+        "total_pred_boxes": 946,
+        "tp": 16,
+        "fp": 930,
+        "fn": 1368,
+        "precision": 0.0169,
+        "recall": 0.0116,
+        "f1": 0.0137,
+        "mean_iou": 0.5873
+      },
+      "Healthy": {
+        "total_gt_boxes": 0,
+        "total_pred_boxes": 46,
+        "tp": 0,
+        "fp": 46,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "mean_iou": 0.0
+      },
+      "Leaf Smut": {
+        "total_gt_boxes": 203,
+        "total_pred_boxes": 244,
+        "tp": 6,
+        "fp": 238,
+        "fn": 197,
+        "precision": 0.0246,
+        "recall": 0.0296,
+        "f1": 0.0268,
+        "mean_iou": 0.6853
+      },
+      "Tungro": {
+        "total_gt_boxes": 483,
+        "total_pred_boxes": 840,
+        "tp": 147,
+        "fp": 693,
+        "fn": 336,
+        "precision": 0.175,
+        "recall": 0.3043,
+        "f1": 0.2222,
+        "mean_iou": 0.649
+      },
+      "Sheath Blight": {
+        "total_gt_boxes": 377,
+        "total_pred_boxes": 664,
+        "tp": 109,
+        "fp": 555,
+        "fn": 268,
+        "precision": 0.1642,
+        "recall": 0.2891,
+        "f1": 0.2094,
+        "mean_iou": 0.6498
+      }
+    },
+    "median_matched_iou": 0.6221,
+    "avg_predicted_boxes_per_image": 2.24
+  },
+  "efficiency": {
+    "total_parameters": 6966151,
+    "trainable_parameters": 6966151,
+    "model_size_mb": 26.86,
+    "peak_vram_mb": 458.79,
+    "gpu_benchmark": {
+      "mean_latency_ms": 10.46,
+      "median_latency_ms": 9.38,
+      "std_latency_ms": 2.32,
+      "min_latency_ms": 8.34,
+      "max_latency_ms": 17.54,
+      "p95_latency_ms": 15.98,
+      "throughput_fps": 95.57,
+      "device": "cuda:0"
+    },
+    "cpu_benchmark": {
+      "mean_latency_ms": 48.35,
+      "median_latency_ms": 41.89,
+      "std_latency_ms": 12.1,
+      "min_latency_ms": 37.91,
+      "max_latency_ms": 76.46,
+      "p95_latency_ms": 74.97,
+      "throughput_fps": 20.68,
+      "device": "cpu"
+    }
+  },
+  "confusion_matrix": [
+    [
+      220,
+      0,
+      8,
+      3,
+      0,
+      6
+    ],
+    [
+      1,
+      175,
+      7,
+      4,
+      10,
+      2
+    ],
+    [
+      7,
+      10,
+      270,
+      18,
+      18,
+      4
+    ],
+    [
+      0,
+      5,
+      20,
+      78,
+      2,
+      4
+    ],
+    [
+      0,
+      10,
+      11,
+      0,
+      314,
+      2
+    ],
+    [
+      2,
+      3,
+      3,
+      0,
+      2,
+      248
+    ]
+  ],
+  "canonical_classes": [
+    "Healthy",
+    "Blast",
+    "Brown Spot",
+    "Leaf Smut",
+    "Tungro",
+    "Sheath Blight"
+  ],
+  "reproducibility": {
+    "seed": null,
+    "python_version": "3.11.9",
+    "pytorch_version": "2.6.0+cu124",
+    "numpy_version": "2.4.6",
+    "cuda_available": true,
+    "cuda_version": "12.4",
+    "cudnn_version": "90100",
+    "gpu_name": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "operating_system": "Windows 10 (10.0.26200)",
+    "platform_machine": "AMD64",
+    "platform_processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "total_training_time_s": 96.83
+}

@@ -1,0 +1,14 @@
+{
+  "project": "RiceGuard",
+  "phase": "phase5_consolidation",
+  "timestamp": "2026-09-09T14:15:31.957453",
+  "final_selected_model_deployment": "Phase 3B EfficientNet-B0 Multi-Task Refined",
+  "best_pure_classification_model": "Phase 2B EfficientNet-B0 Baseline",
+  "main_classification_result": "Phase 2B Test Macro F1 = 0.8891 (90.12% Acc); Phase 3B Test Macro F1 = 0.8751 (88.96% Acc)",
+  "main_localization_result": "Phase 3B Loc F1 = 0.0905, Precision = 0.0887, Mean IoU = 0.6423, Healthy FP = 10.97%",
+  "main_xai_result": "50.3% reduction in border background shortcuts (9.2% vs 18.5%), lower attribution entropy (0.612 vs 0.824), improved pointing on correct subsets (38.21% vs 36.79%)",
+  "main_limitation": "Cross-dataset domain shift and modest localization recall under coarse box supervision",
+  "artifacts_preserved": true,
+  "test_suite_status": "PASS (91/91)",
+  "ruff_status": "PASS (0 errors)"
+}

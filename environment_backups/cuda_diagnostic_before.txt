@@ -1,0 +1,13 @@
+=== NVIDIA-SMI ===
+NVIDIA GeForce GTX 1650
+Driver Version: 592.82
+nvidia-smi CUDA Version: 13.1
+Total VRAM: 4096 MiB (4.0 GB)
+
+=== PYTORCH DIAGNOSTIC BEFORE MIGRATION ===
+PyTorch Version: 2.14.0+cpu
+Torchvision Version: 0.29.0
+PyTorch CUDA Build: None
+CUDA Available: False
+Device Count: 0
+Selected Device: cpu

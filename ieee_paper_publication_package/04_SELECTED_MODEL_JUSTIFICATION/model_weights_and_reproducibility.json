@@ -1,0 +1,32 @@
+{
+  "model_name": "RiceGuard_EfficientNet_B0_MultiTask_Refined",
+  "phase": "Phase 3B",
+  "checkpoint_path": "experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/checkpoints/best_model.pt",
+  "framework": "PyTorch 2.6.0+cu124",
+  "parameters_total": 5348742,
+  "parameters_trainable": 5348742,
+  "model_file_size_mb": 21.8,
+  "test_macro_f1": 0.8814,
+  "test_accuracy": 0.8867,
+  "localization_precision": 0.412,
+  "localization_recall": 0.389,
+  "localization_f1": 0.4002,
+  "mean_matched_iou": 0.6845,
+  "attribution_iou": 0.2487,
+  "energy_inside_mask": 0.4215,
+  "healthy_fpr": 0.0316,
+  "pointing_game_acc": 0.7641,
+  "deletion_auc": 0.2451,
+  "insertion_auc": 0.7684,
+  "inference_latency_gpu_ms": 14.2,
+  "inference_latency_cpu_ms": 48.6,
+  "target_classes": [
+    "Healthy",
+    "Blast",
+    "Brown Spot",
+    "Leaf Smut",
+    "Tungro",
+    "Sheath Blight"
+  ],
+  "governance_lock": "RiceLeafDiseaseBD split verified (706 test images)"
+}

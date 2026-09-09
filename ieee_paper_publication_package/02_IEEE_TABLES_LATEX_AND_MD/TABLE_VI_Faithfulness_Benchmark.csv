@@ -1,0 +1,4 @@
+Model,Deletion_AUC_Lower_Better,Insertion_AUC_Higher_Better,Faithfulness_Score
+Phase 2B Classification Baseline,0.3842,0.6128,0.2286
+Phase 3 Uncalibrated Multi-Task,0.3210,0.6740,0.3530
+Phase 3B Calibrated Multi-Task (RiceGuard),0.2451,0.7684,0.5233

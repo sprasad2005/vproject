@@ -1,0 +1,36 @@
+\section{Related Work}
+\label{sec:related_work}
+
+This section reviews relevant IEEE literature published between 2024 and 2026 across four primary domains: deep learning classification, spatial object detection, lightweight edge architectures, and explainable AI in crop pathology.
+
+\subsection{Deep Learning for Rice Leaf Disease Classification}
+Convolutional neural networks and transfer learning remain the dominant paradigm for automated paddy disease recognition. Singh et al. \cite{ref2} explored DenseNet architectures with Squeeze-and-Excitation blocks and KerasTuner optimization across six rice leaf conditions, achieving a Cohen's kappa of 0.9937. Padhi et al. \cite{ref15} evaluated EfficientNet-B4 with compound scaling on the Paddy Doctor dataset, achieving 96.91\% accuracy across nine disease categories. Other studies have evaluated standard CNN baselines, including ResNet-50 \cite{ref19}, VGG architectures \cite{ref13}, custom LeafNet models \cite{ref17}, and deep CNN variants with augmented datasets \cite{ref10, ref16}. Zaman et al. \cite{ref11} investigated ensemble transfer learning to reduce classification variance. While these approaches achieve high closed-set accuracy, they formulate diagnosis purely at the image level and do not generate spatial evidence identifying the specific lesion sites that support the predicted disease category.
+
+\subsection{Spatial Disease Localization and Object Detection}
+To identify localized symptoms, recent research has transitioned toward object detection frameworks. Nguyen et al. \cite{ref1} proposed RiceLDD-YOLO, optimizing YOLOv13 for rice leaf disease detection to achieve real-time inference (1.7 ms) with an mAP50 of 56.1\%. Chen et al. \cite{ref12} investigated improved YOLOv11 with SPD-Conv and MPDIoU loss to improve small-target pest and disease detection in complex field scenes. While object detectors localize bounding boxes, detection performance differs fundamentally from classification reliability, and dedicated detectors are rarely integrated as shared-backbone multi-task extensions evaluated against controlled classification baselines.
+
+\subsection{Lightweight and Edge-Oriented Architectures}
+Practical agricultural deployment necessitates computationally lightweight models suitable for low-power edge hardware. Ta{\c{s}}c{\i} \cite{ref3} introduced DBLA-MobileNetV2, combining dual-branch lightweight attention with MobileNetV2 to achieve 98.30\% test accuracy on an NVIDIA Jetson Nano. Studies on ARM-M microcontrollers \cite{ref14} demonstrated that quantized mobile CNNs can operate under severe memory constraints. Khan et al. \cite{ref9} evaluated MobileNetV2 transfer learning across varying dataset scales with local Streamlit deployment interfaces. However, edge-focused literature predominantly optimizes throughput and parameter count, leaving confidence calibration and false-alarm suppression under-explored.
+
+\subsection{Explainable AI and Interpretability in Agriculture}
+Explainable AI (XAI) methods have gained traction for interpreting black-box agricultural models. Mahmud et al. \cite{ref4} applied Grad-CAM, Grad-CAM++, and LIME to interpret CNN predictions on Blast and Brown Spot. Nawer et al. \cite{ref5} utilized self-attention mechanisms and SHAP pixel-level attributions. Joardar et al. \cite{ref7} integrated spatial and channel attention with Grad-CAM visualizations. Ismail et al. \cite{ref6} conducted cross-regional Vision Transformer evaluations with Integrated Gradients, revealing significant performance drops (98\% to 38\%) across geographic domains. Bose et al. \cite{ref8} introduced drift detection methods to monitor data shifts. Nonetheless, existing XAI studies rely primarily on qualitative visual inspection of heatmaps rather than quantitative validation against independent pixel-level lesion masks.
+
+\subsection{Literature Summary and Synthesis}
+Table \ref{tab:lit_gap} summarizes the investigated design space across recent IEEE literature and highlights the specific gap addressed by the RiceGuard framework.
+
+\begin{table*}[htbp]
+\centering
+\caption{Comparative Synthesis of Recent IEEE Literature (2024--2026) and Scope of RiceGuard}
+\label{tab:lit_gap}
+\begin{tabular}{p{3.2cm}p{3.2cm}p{4.8cm}p{5.0cm}}
+\hline
+\textbf{Research Direction} & \textbf{Representative Studies} & \textbf{Addressed Capabilities} & \textbf{Remaining Gap Addressed by RiceGuard} \\
+\hline
+Deep Classification & Singh \cite{ref2}, Padhi \cite{ref15}, Kumar \cite{ref19} & High benchmark classification accuracy using CNNs & Absence of spatial lesion localization and reliance on global features \\
+Object Detection & Nguyen \cite{ref1}, Chen \cite{ref12} & Bounding-box detection of disease lesions & Separate detector pipelines without unified multi-task trade-off evaluation \\
+Lightweight Edge AI & Ta{\c{s}}c{\i} \cite{ref3}, ARM-M \cite{ref14}, Khan \cite{ref9} & Low latency and compact parameter footprints & Limited evaluation of confidence calibration and false alarm behavior \\
+Explainable AI (XAI) & Mahmud \cite{ref4}, Nawer \cite{ref5}, Joardar \cite{ref7}, Ismail \cite{ref6} & Visual attribution heatmaps (Grad-CAM, SHAP) & Qualitative-only evaluation lacking quantitative mask-grounded validation \\
+\textbf{RiceGuard (This Work)} & Proposed Framework & Unified multi-task classification + localization & Evaluates spatial grounding, calibration, and honest classification trade-offs \\
+\hline
+\end{tabular}
+\end{table*}

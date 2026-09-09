@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Quantitative Explainability (XAI) Grounding Benchmark on RiceSeg5932 Segmentation Masks}
+\label{tab:xai_grounding}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Grounding Metric} & \textbf{Phase 2B Baseline} & \textbf{Phase 3B Proposed} & \textbf{$\Delta$ Gain} & \textbf{Rel. Gain} & \textbf{$p$-value} & \textbf{Cohen's $d$} \\
+\hline
+Attribution IoU (mean) & 0.1421 & \textbf{0.2487} & +0.1066 & +75.02\% & $<0.0001$ & +0.842 (Large) \\
+Energy Inside Mask (EIM) & 0.2643 & \textbf{0.4215} & +0.1572 & +59.48\% & $<0.0001$ & +0.915 (Large) \\
+Pointing Game Accuracy & 0.5824 & \textbf{0.7641} & +0.1817 & +31.20\% & $<0.001$ & +0.780 (Medium) \\
+Healthy Background Entropy & 3.8412 & \textbf{2.1205} & -1.7207 & -44.80\% & $<0.0001$ & -1.042 (Large) \\
+\hline
+\end{tabular}
+\end{table}

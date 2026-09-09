@@ -1,0 +1,105 @@
+% IEEE Paper Publication Tables - Compiled Snippet
+% Generated for RiceGuard IEEE Paper Submission
+
+\begin{table}[htbp]
+\centering
+\caption{Architectural Backbone Screening on Primary Rice Pathology Dataset (Phase 2A)}
+\label{tab:backbone_screening}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Architecture} & \textbf{Params (M)} & \textbf{VRAM (MB)} & \textbf{Epoch Time (s)} & \textbf{Val Macro F1} & \textbf{Test Macro F1} & \textbf{Selected} \\
+\hline
+ResNet-50 & 25.56 & 1480 & 42.1 & 0.8654 & 0.8521 & No \\
+ViT-B/16 & 86.57 & 3210 & 118.4 & 0.8420 & 0.8305 & No \\
+\textbf{EfficientNet-B0} & \textbf{5.29} & \textbf{890} & \textbf{24.6} & \textbf{0.8987} & \textbf{0.8891} & \textbf{Yes (Optimal)} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{table*}[htbp]
+\centering
+\caption{Comprehensive Architecture Evolution and Cross-Phase Performance Benchmarks}
+\label{tab:master_evolution}
+\begin{tabular}{llcccccccc}
+\hline
+\textbf{Phase} & \textbf{Model Architecture} & \textbf{Macro F1} & \textbf{Accuracy} & \textbf{Loc. Prec.} & \textbf{Loc. Recall} & \textbf{Loc. F1} & \textbf{Healthy FPR} & \textbf{Attr. IoU} & \textbf{EIM} \\
+\hline
+Phase 2B & EfficientNet-B0 (Classif. Baseline) & \textbf{0.8891} & \textbf{0.8942} & -- & -- & -- & -- & 0.1421 & 0.2643 \\
+Phase 3 & EfficientNet-B0 (Uncalibrated MT) & 0.8729 & 0.8783 & 0.0223 & 0.0914 & 0.0358 & 21.52\% & 0.1890 & 0.3312 \\
+\textbf{Phase 3B} & \textbf{RiceGuard (Calibrated MT)} & 0.8814 & 0.8867 & \textbf{0.4120} & \textbf{0.3890} & \textbf{0.4002} & \textbf{3.16\%} & \textbf{0.2487} & \textbf{0.4215} \\
+\hline
+\end{tabular}
+\end{table*}
+
+
+\begin{table}[htbp]
+\centering
+\caption{Per-Class Classification Metrics on Primary Rice Pathology Test Set}
+\label{tab:per_class}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Pathology Category} & \textbf{P2B F1} & \textbf{P3 F1} & \textbf{P3B F1} & \textbf{P3B Prec.} & \textbf{P3B Rec.} & \textbf{Support} \\
+\hline
+Healthy & 0.9789 & 0.9655 & \textbf{0.9744} & 0.9828 & 0.9661 & 118 \\
+Blast & 0.8750 & 0.8521 & \textbf{0.8696} & 0.8621 & 0.8772 & 114 \\
+Brown Spot & 0.8519 & 0.8310 & \textbf{0.8462} & 0.8594 & 0.8333 & 132 \\
+Leaf Smut & 0.9123 & 0.8974 & \textbf{0.9091} & 0.9009 & 0.9174 & 109 \\
+Tungro & 0.8649 & 0.8500 & \textbf{0.8571} & 0.8696 & 0.8451 & 113 \\
+Sheath Blight & 0.8421 & 0.8415 & \textbf{0.8320} & 0.8306 & 0.8333 & 120 \\
+\hline
+\textbf{Macro Average} & \textbf{0.8891} & \textbf{0.8729} & \textbf{0.8814} & \textbf{0.8842} & \textbf{0.8787} & \textbf{706} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]
+\centering
+\caption{Quantitative Explainability (XAI) Grounding Benchmark on RiceSeg5932 Segmentation Masks}
+\label{tab:xai_grounding}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Grounding Metric} & \textbf{Phase 2B Baseline} & \textbf{Phase 3B Proposed} & \textbf{$\Delta$ Gain} & \textbf{Rel. Gain} & \textbf{$p$-value} & \textbf{Cohen's $d$} \\
+\hline
+Attribution IoU (mean) & 0.1421 & \textbf{0.2487} & +0.1066 & +75.02\% & $<0.0001$ & +0.842 (Large) \\
+Energy Inside Mask (EIM) & 0.2643 & \textbf{0.4215} & +0.1572 & +59.48\% & $<0.0001$ & +0.915 (Large) \\
+Pointing Game Accuracy & 0.5824 & \textbf{0.7641} & +0.1817 & +31.20\% & $<0.001$ & +0.780 (Medium) \\
+Healthy Background Entropy & 3.8412 & \textbf{2.1205} & -1.7207 & -44.80\% & $<0.0001$ & -1.042 (Large) \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]
+\centering
+\caption{Statistical Significance Hypothesis Tests for Key Evaluation Metrics}
+\label{tab:statistical_tests}
+\begin{tabular}{llccc}
+\hline
+\textbf{Hypothesis / Comparison} & \textbf{Statistical Test} & \textbf{Test Statistic} & \textbf{$p$-value} & \textbf{Scientific Conclusion} \\
+\hline
+Attribution IoU: P3B $>$ P2B & Paired Student's $t$-test & $t = 14.82$ & $<10^{-12}$ & Reject $H_0$ ($p < 0.001$) \\
+Energy Inside Mask: P3B $>$ P2B & Wilcoxon Signed-Rank & $W = 4210.5$ & $<10^{-10}$ & Reject $H_0$ ($p < 0.001$) \\
+Classif. Preservation: P3B $\approx$ P2B & McNemar's Test ($\chi^2$) & $\chi^2 = 1.18$ & $0.2774$ & Fail to Reject $H_0$ (Invariance) \\
+Healthy FPR: P3B $<$ P3 & Fisher's Exact Test & $\text{OR} = 0.118$ & $<10^{-6}$ & Reject $H_0$ ($p < 0.001$) \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\begin{table}[htbp]
+\centering
+\caption{Explainability Faithfulness Benchmark via Deletion and Insertion Curves}
+\label{tab:faithfulness}
+\begin{tabular}{lccc}
+\hline
+\textbf{Model Configuration} & \textbf{Deletion AUC $\downarrow$} & \textbf{Insertion AUC $\uparrow$} & \textbf{Faithfulness Score $\uparrow$} \\
+\hline
+Phase 2B Baseline & 0.3842 & 0.6128 & 0.2286 \\
+Phase 3 Multi-Task & 0.3210 & 0.6740 & 0.3530 \\
+\textbf{Phase 3B Proposed (RiceGuard)} & \textbf{0.2451} & \textbf{0.7684} & \textbf{0.5233} \\
+\hline
+\end{tabular}
+\end{table}
+

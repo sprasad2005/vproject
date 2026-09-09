@@ -1,0 +1,25 @@
+{
+  "seed": 42,
+  "python_version": "3.11.9",
+  "pytorch_version": "2.14.0+cpu",
+  "numpy_version": "2.4.6",
+  "cuda_available": false,
+  "cuda_version": "N/A",
+  "cudnn_version": "N/A",
+  "gpu_name": "N/A",
+  "gpu_count": 0,
+  "operating_system": "Windows 10 (10.0.26200)",
+  "platform_machine": "AMD64",
+  "platform_processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "model_name": "efficientnet_b0",
+  "device": "cpu",
+  "canonical_classes": [
+    "Healthy",
+    "Blast",
+    "Brown Spot",
+    "Leaf Smut",
+    "Tungro",
+    "Sheath Blight"
+  ],
+  "timestamp": "2026-09-08 16:14:48"
+}

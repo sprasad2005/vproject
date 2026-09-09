@@ -1,0 +1,47 @@
+# Phase 4: Quantitative Lesion-Grounded XAI Validation Configuration
+experiment_name: phase4_xai_grounding
+seed: 42
+
+device: cuda
+
+models:
+  phase2b:
+    checkpoint: experiments/phase2b_final_baseline/efficientnet_b0/checkpoints/best_model.pt
+    type: efficientnet_b0
+
+  phase3b:
+    checkpoint: experiments/phase3b_localization_refinement/efficientnet_b0_multitask_refined/checkpoints/best_model.pt
+    type: efficientnet_b0_multitask
+    confidence_threshold: 0.60
+    top_k: 3
+
+dataset:
+  name: RiceSeg5932
+  manifest_path: data/processed/manifests/riceseg_manifest.csv
+  usage: xai_ground_truth_only
+
+evaluation:
+  image_size: 224
+
+gradcam:
+  target: predicted_class
+  normalization: minmax
+
+attribution_iou:
+  protocol: top_percent
+  top_percent: 20
+
+faithfulness:
+  enabled: true
+  max_samples: 300
+  seed: 42
+  steps: 20
+
+statistics:
+  enabled: true
+  alpha: 0.05
+
+output:
+  experiment_dir: experiments/phase4_xai
+  reports_dir: results/reports
+  figures_dir: results/figures/phase4

@@ -1,0 +1,21 @@
+\section{Research Gap and Study Objectives}
+\label{sec:research_gap}
+
+\subsection{Scientific Motivation}
+Within the surveyed literature, deep learning models for rice disease diagnosis generally operate either as pure image-level classifiers or as standalone object detectors. While classifiers achieve high accuracy, they do not explicitly learn the spatial boundaries of pathological lesions. Conversely, visual explainability methods such as Grad-CAM provide qualitative visual maps, but their spatial fidelity to actual pathological lesions remains largely unquantified.
+
+\subsection{Primary Research Question}
+This study investigates the central research question:
+\begin{quote}
+\textit{Does incorporating weak bounding-box lesion localization supervision into an EfficientNet-B0 classification backbone provide measurable spatial localization and explainability grounding benefits, and what classification-localization trade-off does joint multi-task optimization introduce?}
+\end{quote}
+
+\subsection{Specific Study Objectives}
+To address this question, five specific research objectives were formulated and experimentally evaluated:
+\begin{enumerate}
+    \item \textbf{Objective 1 (Classification Baseline)}: Establish a controlled six-class classification baseline using an EfficientNet-B0 backbone on the primary RiceLeafDiseaseBD benchmark.
+    \item \textbf{Objective 2 (Multi-Task Formulation)}: Design and integrate a $7\times 7$ grid-based lesion localization head sharing backbone feature representations with the classification stream.
+    \item \textbf{Objective 3 (Localization Calibration)}: Investigate the impact of positive objectness class weighting and validation-only confidence thresholding on localization precision and healthy leaf false positive rates.
+    \item \textbf{Objective 4 (Quantitative XAI Grounding)}: Quantitatively evaluate Grad-CAM attribution alignment against independent expert lesion masks from RiceSeg5932 using Energy Inside Mask, Attribution IoU, and Pointing Game metrics.
+    \item \textbf{Objective 5 (Shortcut and Trade-Off Analysis)}: Quantify the effect of multi-task supervision on background/border attention entropy and evaluate the resulting classification-localization performance trade-off.
+\end{enumerate}

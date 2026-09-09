@@ -1,0 +1,158 @@
+{
+  "model_name": "resnet50",
+  "overall_metrics": {
+    "accuracy": 0.8814,
+    "macro_f1": 0.8651,
+    "macro_precision": 0.8621,
+    "macro_recall": 0.8703
+  },
+  "per_class": {
+    "Healthy": {
+      "precision": 0.915,
+      "recall": 0.9536,
+      "f1": 0.9339,
+      "support": 237
+    },
+    "Blast": {
+      "precision": 0.8062,
+      "recall": 0.9196,
+      "f1": 0.8592,
+      "support": 199
+    },
+    "Brown Spot": {
+      "precision": 0.8664,
+      "recall": 0.7737,
+      "f1": 0.8174,
+      "support": 327
+    },
+    "Leaf Smut": {
+      "precision": 0.7064,
+      "recall": 0.7064,
+      "f1": 0.7064,
+      "support": 109
+    },
+    "Tungro": {
+      "precision": 0.9137,
+      "recall": 0.911,
+      "f1": 0.9123,
+      "support": 337
+    },
+    "Sheath Blight": {
+      "precision": 0.9648,
+      "recall": 0.9574,
+      "f1": 0.9611,
+      "support": 258
+    }
+  },
+  "confusion_matrix": [
+    [
+      226,
+      0,
+      5,
+      4,
+      0,
+      2
+    ],
+    [
+      0,
+      183,
+      6,
+      2,
+      7,
+      1
+    ],
+    [
+      10,
+      20,
+      253,
+      23,
+      18,
+      3
+    ],
+    [
+      4,
+      13,
+      12,
+      77,
+      1,
+      2
+    ],
+    [
+      2,
+      10,
+      15,
+      2,
+      307,
+      1
+    ],
+    [
+      5,
+      1,
+      1,
+      1,
+      3,
+      247
+    ]
+  ],
+  "classification_report": {
+    "Healthy": {
+      "precision": 0.9149797570850202,
+      "recall": 0.9535864978902954,
+      "f1-score": 0.9338842975206612,
+      "support": 237.0
+    },
+    "Blast": {
+      "precision": 0.8061674008810573,
+      "recall": 0.9195979899497487,
+      "f1-score": 0.8591549295774648,
+      "support": 199.0
+    },
+    "Brown Spot": {
+      "precision": 0.8664383561643836,
+      "recall": 0.7737003058103975,
+      "f1-score": 0.8174474959612278,
+      "support": 327.0
+    },
+    "Leaf Smut": {
+      "precision": 0.7064220183486238,
+      "recall": 0.7064220183486238,
+      "f1-score": 0.7064220183486238,
+      "support": 109.0
+    },
+    "Tungro": {
+      "precision": 0.9136904761904762,
+      "recall": 0.9109792284866469,
+      "f1-score": 0.912332838038633,
+      "support": 337.0
+    },
+    "Sheath Blight": {
+      "precision": 0.96484375,
+      "recall": 0.9573643410852714,
+      "f1-score": 0.9610894941634242,
+      "support": 258.0
+    },
+    "accuracy": 0.8813905930470347,
+    "macro avg": {
+      "precision": 0.8620902931115935,
+      "recall": 0.8702750635951638,
+      "f1-score": 0.8650551789350058,
+      "support": 1467.0
+    },
+    "weighted avg": {
+      "precision": 0.8823764387501187,
+      "recall": 0.8813905930470347,
+      "f1-score": 0.880725969046228,
+      "support": 1467.0
+    }
+  },
+  "efficiency": {
+    "total_parameters": 23520326,
+    "trainable_parameters": 23520326,
+    "model_size_mb": 90.03,
+    "cpu_latency_mean_ms": 117.19,
+    "cpu_latency_median_ms": 115.52,
+    "cpu_latency_p95_ms": 131.15,
+    "throughput_fps": 8.53
+  },
+  "sample_count": 1467
+}

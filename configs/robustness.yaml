@@ -1,0 +1,19 @@
+robustness:
+  perturbations:
+    gaussian_noise:
+      severities: [0.05, 0.1, 0.15, 0.2, 0.25]
+    gaussian_blur:
+      kernel_sizes: [3, 5, 7, 9, 11]
+    brightness_shift:
+      factors: [0.6, 0.8, 1.2, 1.4, 1.6]
+    contrast_shift:
+      factors: [0.6, 0.8, 1.2, 1.4, 1.6]
+    jpeg_compression:
+      qualities: [80, 60, 40, 20, 10]
+    hue_shift:
+      shifts: [-20, -10, 10, 20]
+
+  evaluation:
+    track_accuracy_degradation: true
+    track_explanation_stability: true
+    track_calibration_error: true

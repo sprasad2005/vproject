@@ -1,0 +1,96 @@
+\section{Materials and Methods}
+\label{sec:materials_methods}
+
+\subsection{Dataset Governance and Partitioning}
+All model training, validation, and testing were conducted strictly on the standardized \textbf{RiceLeafDiseaseBD} benchmark dataset. To prevent data contamination, strict data governance policies were enforced in software (\texttt{src/data/dataset\_registry.py}).
+\begin{itemize}
+    \item \textbf{Primary Dataset (RiceLeafDiseaseBD)}: Contains 7,060 images spanning six canonical classes: Healthy, Blast, Brown Spot, Leaf Smut, Tungro, and Sheath Blight. Partitioned into 80\% training (2,824 primary images), 10\% validation (706 images), and 10\% testing (706 images) using stratified sampling. Bounding-box annotations in normalized YOLO format $(x_c, y_c, w, h)$ were used for localization supervision.
+    \item \textbf{Independent XAI Dataset (RiceSeg5932)}: Contains paired pixel-level lesion segmentation masks. In strict accordance with project governance, RiceSeg5932 was designated as \texttt{xai\_ground\_truth\_only} and was \textbf{never} used for model training, validation, hyperparameter tuning, or checkpoint selection. Of the 5,932 raw pairs, 4,348 eligible samples corresponding to canonical classes (Blast: 1,440, Brown Spot: 1,600, Tungro: 1,308) were evaluated; 1,584 non-canonical samples (Bacterial Blight) were excluded.
+    \item \textbf{Locked External Datasets}: Sethy5932 and RiceLeafDiseaseBD5 remained strictly locked and unused during model training.
+\end{itemize}
+
+Table \ref{tab:dataset_summary} summarizes dataset roles and access permissions.
+
+\subsection{Phase 2B Classification Baseline}
+The classification baseline employs an \textbf{EfficientNet-B0} backbone pretrained on ImageNet-1K. Input images are resized to $224 \times 224 \times 3$ and normalized. The terminal spatial feature map $F \in \mathbb{R}^{B \times 1280 \times 7 \times 7}$ is processed via global average pooling ($\text{AdaptiveAvgPool2d}(1)$), Dropout ($p=0.2$), and a linear classification head:
+\begin{equation}
+\hat{y} = \mathbf{W}_{\text{cls}} \cdot \text{GAP}(F) + \mathbf{b}_{\text{cls}}, \quad \hat{y} \in \mathbb{R}^6
+\end{equation}
+The baseline is trained using multi-class Cross-Entropy loss ($\mathcal{L}_{\text{cls}}$) with AdamW ($\eta_0 = 10^{-4}$, weight decay $= 10^{-4}$) and Cosine Annealing over 30 epochs.
+
+\subsection{Phase 3 Lesion-Grounded Multi-Task Architecture}
+The multi-task architecture extends the shared EfficientNet-B0 backbone by bifurcating the terminal feature map $F$ into simultaneous classification and localization branches:
+\begin{enumerate}
+    \item \textbf{Classification Branch}: Retains global pooling and the 6-class linear classifier.
+    \item \textbf{Localization Branch}: Processes $F$ through a $3\times 3$ convolution ($\text{Conv2d}(1280, 256, \text{kernel}=3, \text{padding}=1)$), Batch Normalization, SiLU activation, and a $1\times 1$ convolution producing a 5-channel tensor $T_{\text{loc}} \in \mathbb{R}^{B \times 5 \times 7 \times 7}$.
+\end{enumerate}
+
+The five output channels correspond to:
+\begin{itemize}
+    \item Channel 0: Objectness logit $l_{\text{obj}} \in \mathbb{R}$.
+    \item Channels 1--2: Grid-cell relative center offsets $(dx, dy) \in \mathbb{R}^2$.
+    \item Channels 3--4: Normalized bounding box dimensions $(w, h) \in \mathbb{R}^2$.
+\end{itemize}
+
+\subsection{Grid Target Assignment and Collision Handling}
+For each ground-truth bounding box $(x_c, y_c, w, h)$ where coordinates are normalized to $[0, 1]$, target assignment onto the $7\times 7$ grid is defined by:
+\begin{equation}
+j = \lfloor x_c \times 7 \rfloor, \quad i = \lfloor y_c \times 7 \rfloor
+\end{equation}
+\begin{equation}
+dx^* = x_c \times 7 - j, \quad dy^* = y_c \times 7 - i
+\end{equation}
+where $(i, j)$ index row and column grid cells ($0 \le i, j < 7$). If multiple ground-truth boxes map to the same grid cell, deterministic collision resolution assigns the box with the largest normalized area $(w \times h)$. For healthy images containing no disease lesions, objectness targets are set to zero across all 49 cells ($p_{i,j}^* = 0$).
+
+\subsection{Multi-Task Loss Formulation}
+The composite multi-task objective function $\mathcal{L}_{\text{total}}$ is defined as:
+\begin{equation}
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{cls}} + \lambda_{\text{loc}} \mathcal{L}_{\text{loc}}
+\end{equation}
+where $\lambda_{\text{loc}} = 1.0$ and $\mathcal{L}_{\text{loc}} = \mathcal{L}_{\text{obj}} + \lambda_{\text{box}} \mathcal{L}_{\text{box}}$ ($\lambda_{\text{box}} = 1.0$).
+
+The objectness loss $\mathcal{L}_{\text{obj}}$ is computed across all 49 grid cells using binary cross-entropy with logits and positive class weighting:
+\begin{equation}
+\mathcal{L}_{\text{obj}} = \frac{1}{49}\sum_{i=1}^7 \sum_{j=1}^7 \text{BCEWithLogits}(l_{\text{obj}}^{(i,j)}, p^{*(i,j)}; w_{\text{pos}})
+\end{equation}
+The bounding box regression loss $\mathcal{L}_{\text{box}}$ applies Smooth L1 loss strictly over positive grid cells where $p^{*(i,j)} = 1$:
+\begin{equation}
+\begin{aligned}
+\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j: p^*=1} & \Big[ \text{Smooth}_{L1}(\sigma(dx), dx^*) \\
+& + \text{Smooth}_{L1}(\sigma(dy), dy^*) \\
+& + \text{Smooth}_{L1}(\sigma(w), w^*) \\
+& + \text{Smooth}_{L1}(\sigma(h), h^*) \Big]
+\end{aligned}
+\end{equation}
+If an image contains no positive cells ($N_{\text{pos}} = 0$), $\mathcal{L}_{\text{box}}$ evaluates to zero.
+
+\subsection{Phase 3B Localization Refinement and Calibration}
+In the initial Phase 3 multi-task model, uncalibrated positive weighting ($\text{pos\_weight} = 22.90$) caused high objectness sensitivity, resulting in excessive predicted boxes and elevated false positive rates on healthy leaves (21.52\%). 
+
+Phase 3B introduced two controlled refinements:
+\begin{enumerate}
+    \item \textbf{Objectness Imbalance Capping}: The effective positive weight was capped at $\text{pos\_weight} = 10.00$ during fine-tuning from the Phase 3 checkpoint with AdamW ($\eta = 5 \times 10^{-5}$) and Cosine Annealing over 15 epochs.
+    \item \textbf{Validation-Only Decoding Calibration}: A post-processing sweep was conducted strictly on the validation set over confidence thresholds $\tau \in [0.10, 0.80]$ and Top-$K \in \{3, 5, 10, \infty\}$. The optimal configuration balancing Localization F1 and healthy false positive rate was determined as $\tau = 0.60$ and $\text{Top-}K = 3$. This decoding configuration was frozen prior to test evaluation.
+\end{enumerate}
+
+\subsection{Quantitative Explainability (XAI) Framework}
+Grad-CAM heatmaps were generated from the final convolutional layer of the shared backbone (\texttt{backbone.conv\_head}) targeted at the predicted disease class logit. Continuous attributions $A \in [0, 1]^{H \times W}$ were evaluated against independent RiceSeg5932 binary masks $M \in \{0, 1\}^{H \times W}$:
+\begin{itemize}
+    \item \textbf{Energy Inside Mask (EIM)}: Proportion of attribution energy within the ground-truth lesion mask:
+    \begin{equation}
+    \text{EIM} = \frac{\sum_{(u,v) \in M} A(u,v)}{\sum_{(u,v)} A(u,v)}
+    \end{equation}
+    \item \textbf{Attribution IoU}: Intersection-over-Union between the binarized top 20\% attribution region $A_{\text{top20}}$ and lesion mask $M$:
+    \begin{equation}
+    \text{IoU}_{\text{attr}} = \frac{|A_{\text{top20}} \cap M|}{|A_{\text{top20}} \cup M|}
+    \end{equation}
+    \item \textbf{Pointing Game}: Binary metric indicating whether the global attribution maximum falls inside the mask:
+    \begin{equation}
+    P_{\text{hit}} = \mathbb{I}\left( \arg\max_{(u,v)} A(u,v) \in M \right)
+    \end{equation}
+    \item \textbf{Border Attention Ratio}: Ratio of attribution mass within a 10\% peripheral boundary border to total attribution mass on healthy control leaves.
+    \item \textbf{Normalized Attribution Entropy}: Spatial dispersion of attribution mass across the image grid.
+\end{itemize}
+
+\subsection{Faithfulness Evaluation Protocol}
+Explanation faithfulness was evaluated via pixel deletion and insertion curves on $N=300$ randomly selected test samples over 20 perturbation steps using Gaussian blur baselines. Deletion AUC measures the rate of model confidence degradation as salient pixels are masked (lower is better), while Insertion AUC measures confidence recovery as salient pixels are introduced (higher is better).

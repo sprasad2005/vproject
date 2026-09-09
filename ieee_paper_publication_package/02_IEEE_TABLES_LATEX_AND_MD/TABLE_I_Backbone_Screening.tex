@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{Architectural Backbone Screening on Primary Rice Pathology Dataset (Phase 2A)}
+\label{tab:backbone_screening}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Architecture} & \textbf{Params (M)} & \textbf{VRAM (MB)} & \textbf{Epoch Time (s)} & \textbf{Val Macro F1} & \textbf{Test Macro F1} & \textbf{Selected} \\
+\hline
+ResNet-50 & 25.56 & 1480 & 42.1 & 0.8654 & 0.8521 & No \\
+ViT-B/16 & 86.57 & 3210 & 118.4 & 0.8420 & 0.8305 & No \\
+\textbf{EfficientNet-B0} & \textbf{5.29} & \textbf{890} & \textbf{24.6} & \textbf{0.8987} & \textbf{0.8891} & \textbf{Yes (Optimal)} \\
+\hline
+\end{tabular}
+\end{table}

@@ -1,0 +1,38 @@
+xai:
+  methods:
+    - gradcam
+    - gradcam_plus_plus
+    - integrated_gradients
+    - shap_explainer
+
+  gradcam:
+    target_layer: layer4
+    use_cuda: true
+
+  integrated_gradients:
+    steps: 50
+    baseline: black
+
+  shap:
+    background_samples: 50
+    eval_samples: 200
+
+  lesion_grounding:
+    ground_truth_dataset: RiceSeg5932
+    threshold_strategy: otsu
+    metrics:
+      - iou
+      - dice
+      - precision
+      - recall
+
+  faithfulness:
+    metrics:
+      - pixel_deletion_auc
+      - pixel_insertion_auc
+
+  stability:
+    num_perturbation_steps: 5
+    similarity_metrics:
+      - structural_similarity_index  # SSIM
+      - pearson_correlation

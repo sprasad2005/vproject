@@ -1,0 +1,119 @@
+datasets:
+  primary:
+    name: RiceLeafDiseaseBD
+    path: "RiceLeafDiseaseBD A Field-Based Annotated Smartpho"
+    role: primary_training
+    training_allowed: true
+    validation_allowed: true
+    internal_test_allowed: true
+    xai_ground_truth: false
+    classes:
+      - Healthy
+      - Blast
+      - Brown Spot
+      - Leaf Smut
+      - Tungro
+      - Sheath Blight
+    num_classes: 6
+    has_bounding_boxes: true
+    split_ratios:
+      train: 0.70
+      val: 0.15
+      test: 0.15
+    split_seed: 42
+
+  sethy:
+    name: Sethy5932
+    path: "Rice Leaf Disease Image Samples"
+    role: external_test_only
+    training_allowed: false
+    validation_allowed: false
+    internal_test_allowed: false
+    xai_ground_truth: false
+    classes:
+      - Bacterial Blight
+      - Blast
+      - Brown Spot
+      - Tungro
+    num_classes: 4
+
+  bd5:
+    name: RiceLeafDiseaseBD5
+    path: "RiceLeafDisease-BD5 A Field-Collected Five-Class I"
+    role: external_field_test_only
+    training_allowed: false
+    validation_allowed: false
+    internal_test_allowed: false
+    xai_ground_truth: false
+    classes:
+      - Blast
+      - Narrow Brown Spot
+      - Sheath Blight
+      - Tungro
+      - Normal
+    num_classes: 5
+    mapping_policy:
+      preserve_narrow_brown_spot: true  # Do not automatically map Narrow Brown Spot to Brown Spot
+
+  riceseg:
+    name: RiceSeg5932
+    path: "RiceSeg-5932 Complete Pixel-Level Segmentation Mas"
+    role: xai_ground_truth_only
+    training_allowed: false
+    validation_allowed: false
+    internal_test_allowed: false
+    xai_ground_truth: true
+    has_pixel_masks: true
+    metrics:
+      - iou
+      - dice
+      - precision
+      - recall
+
+preprocessing:
+  image_size: [224, 224]
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  interpolation: bilinear
+
+augmentation:
+  train:
+    random_resized_crop:
+      size: [224, 224]
+      scale: [0.8, 1.0]
+    random_horizontal_flip:
+      p: 0.5
+    random_vertical_flip:
+      p: 0.5
+    random_rotation:
+      degrees: 15
+    color_jitter:
+      brightness: 0.2
+      contrast: 0.2
+      saturation: 0.2
+      hue: 0.1
+  val_test:
+    resize: [256, 256]
+    center_crop: [224, 224]
+
+dataloader:
+  batch_size: 32
+  num_workers: 4
+  pin_memory: true
+  drop_last: false
+
+quality_checks:
+  detect_corrupted_images: true
+  exact_duplicate_hash: sha256
+  near_duplicate_detection: true
+  near_dup_threshold: 4
+  min_dimension: 16
+
+splitting:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify: true
+  seed: 42
+  prevent_exact_duplicate_leakage: true
+

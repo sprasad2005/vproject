@@ -1,0 +1,42 @@
+# Vision Transformer (ViT-B/16) Baseline Experiment Configuration
+experiment_name: vit_baseline
+description: "Standard Vision Transformer (ViT-B/16) baseline trained on primary RiceLeafDiseaseBD dataset (6 classes)."
+
+model:
+  name: vit_b_16
+  num_classes: 6
+  pretrained: true
+  dropout_rate: 0.1
+
+preprocessing:
+  image_size: [224, 224]
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+training:
+  epochs: 15
+  batch_size: 2
+  num_workers: 2
+  pin_memory: true
+  use_cuda: true
+  amp: true
+  early_stopping_patience: 5
+  early_stopping_min_delta: 0.0001
+
+optimizer:
+  name: adamw
+  lr: 0.00005
+  weight_decay: 0.0001
+
+scheduler:
+  name: cosine_annealing
+  t_max: 15
+  eta_min: 0.000001
+
+loss:
+  name: cross_entropy
+  label_smoothing: 0.0
+  use_class_weights: false
+
+reproducibility:
+  seed: 42

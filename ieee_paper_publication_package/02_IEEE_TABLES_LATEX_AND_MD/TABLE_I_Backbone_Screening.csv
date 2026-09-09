@@ -1,0 +1,4 @@
+Model,Params_M,VRAM_MB,Epoch_Time_s,Val_Acc,Val_Macro_F1,Test_Macro_F1,Selected
+ResNet-50,25.56,1480,42.1,0.8912,0.8654,0.8521,No
+ViT-B/16,86.57,3210,118.4,0.8745,0.8420,0.8305,No (OOM Risk)
+EfficientNet-B0,5.29,890,24.6,0.9124,0.8987,0.8891,Yes (Backbone)

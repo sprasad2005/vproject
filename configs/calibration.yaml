@@ -1,0 +1,14 @@
+calibration:
+  method: temperature_scaling
+  optimizer: lbfgs
+  max_iter: 50
+  lr: 0.01
+
+evaluation:
+  num_bins: 15
+  metrics:
+    - expected_calibration_error  # ECE
+    - maximum_calibration_error   # MCE
+    - brier_score
+    - negative_log_likelihood     # NLL
+  save_reliability_diagrams: true

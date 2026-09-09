@@ -1,0 +1,48 @@
+{
+  "dataset": "RiceLeafDiseaseBD",
+  "seed": 42,
+  "target_ratios": {
+    "train": 0.7,
+    "val": 0.15,
+    "test": 0.15
+  },
+  "actual_counts": {
+    "total": 9769,
+    "train": 6837,
+    "val": 1465,
+    "test": 1467
+  },
+  "class_distributions": {
+    "train": {
+      "Tungro": 1571,
+      "Brown Spot": 1524,
+      "Sheath Blight": 1206,
+      "Healthy": 1101,
+      "Blast": 928,
+      "Leaf Smut": 507
+    },
+    "val": {
+      "Tungro": 336,
+      "Brown Spot": 327,
+      "Sheath Blight": 258,
+      "Healthy": 237,
+      "Blast": 199,
+      "Leaf Smut": 108
+    },
+    "test": {
+      "Tungro": 337,
+      "Brown Spot": 327,
+      "Sheath Blight": 258,
+      "Healthy": 237,
+      "Blast": 199,
+      "Leaf Smut": 109
+    }
+  },
+  "leakage_verification": {
+    "exact_duplicate_leakage_passed": true,
+    "train_val_overlap": 0,
+    "train_test_overlap": 0,
+    "val_test_overlap": 0
+  },
+  "timestamp": "2026-09-08 15:49:33"
+}

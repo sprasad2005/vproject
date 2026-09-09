@@ -1,0 +1,17 @@
+\section{Limitations and Threats to Validity}
+\label{sec:limitations}
+
+To ensure complete scientific honesty, several experimental and methodological limitations must be stated:
+
+\subsection{Internal Validity}
+\begin{enumerate}
+    \item \textbf{Grid Resolution Constraints}: The $7\times 7$ grid partition limits spatial resolution to $32 \times 32$ pixel receptive field cells at $224 \times 224$ input resolution. When multiple small punctate lesions (e.g., Brown Spot) occupy a single cell, collision handling retains only the largest box, constraining localization recall.
+    \item \textbf{Classification Trade-off}: Multi-task supervision resulted in a minor reduction in Macro F1 relative to the dedicated classification baseline.
+\end{enumerate}
+
+\subsection{External and Construct Validity}
+\begin{enumerate}
+    \item \textbf{Domain Shift in XAI Evaluation}: RiceSeg5932 originates from an independent dataset distribution with distinct photographic conditions. While serving as an objective ground-truth benchmark, domain shift lowers absolute classification and attribution overlap for both models.
+    \item \textbf{Grad-CAM Limitations}: Saliency maps are derived from coarse $7\times 7$ feature maps, which restricts high-frequency boundary delineation compared to full semantic segmentation.
+    \item \textbf{Deployment Scope}: The current application runs strictly on localhost; prospective multi-season agricultural field validation remains future work.
+\end{enumerate}

@@ -1,0 +1,24 @@
+\section{Experimental Setup and Evaluation Metrics}
+\label{sec:setup_metrics}
+
+\subsection{Hardware and Software Environment}
+All experiments were executed on an isolated workstation equipped with an NVIDIA GeForce GTX 1650 GPU (4 GB GDDR6 VRAM, compute capability 7.5) and an Intel Core i5 processor running 64-bit Windows 10 (Build 10.0.26200). The software stack comprised Python 3.11.9, PyTorch 2.6.0+cu124, Torchvision 0.21.0+cu124, and CUDA 12.4 with cuDNN 90100. Deterministic execution was enforced across all runs using random seed 42.
+
+\subsection{Evaluation Metrics}
+Model performance was evaluated across five complementary dimensions:
+\begin{enumerate}
+    \item \textbf{Classification}: Top-1 Accuracy, Balanced Accuracy, Macro Precision, Macro Recall, Macro F1, and per-class F1-scores.
+    \item \textbf{Localization}: Detection Precision, Detection Recall, Localization F1-score, Mean Matched IoU (greedy matching at $\text{IoU} \ge 0.5$), and Healthy False Positive Rate (percentage of healthy images with $\ge 1$ predicted box).
+    \item \textbf{Explainability Grounding}: Energy Inside Mask (EIM), Attribution IoU (Top 20\%), and Pointing Game accuracy.
+    \item \textbf{Shortcut Diagnostics}: Border Attention Ratio and Normalized Attribution Entropy.
+    \item \textbf{Faithfulness}: Area Under the Deletion Curve (Deletion AUC) and Area Under the Insertion Curve (Insertion AUC).
+\end{enumerate}
+
+\subsection{Statistical Significance Protocols}
+Statistical comparisons between paired model configurations were conducted using:
+\begin{itemize}
+    \item \textbf{McNemar's Test} ($\chi^2$) for categorical classification differences and binary Pointing Game hit/miss outcomes.
+    \item \textbf{Paired Wilcoxon Signed-Rank Test} for continuous, non-normally distributed grounding metrics (EIM, Attribution IoU).
+    \item \textbf{Fisher's Exact Test} for healthy leaf false positive rate proportions.
+\end{itemize}
+Significance thresholds were set at $\alpha = 0.05$.

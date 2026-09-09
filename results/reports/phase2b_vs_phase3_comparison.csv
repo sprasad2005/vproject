@@ -1,0 +1,21 @@
+Metric / Attribute,Phase 2B EfficientNet-B0 Baseline,Phase 3 Proposed Multi-Task,Delta
+Experiment Type,Classification-Only Baseline,Lesion-Aware Multi-Task,-
+Supervision Signals,Class Labels Only (6 classes),Class Labels (6 classes) + 7x7 YOLO Boxes,-
+Best Val Epoch,13,4,Epoch 4 vs 13
+Best Val Macro F1,0.8776,0.8598,-0.0178
+Test Accuracy,90.12%,88.75%,-1.37%
+Test Balanced Accuracy,89.28%,86.97%,-2.31%
+Test Macro Precision,0.8871,0.8772,-0.0099
+Test Macro Recall,0.8928,0.8697,-0.0231
+Test Macro F1,0.8891,0.8729,-0.0162
+Test Weighted F1,0.9011,0.8869,-0.0142
+Test Localization Precision,N/A,0.0223,New Capability
+Test Localization Recall,N/A,0.0914,New Capability
+Test Localization F1,N/A,0.0358,New Capability
+Test Localization Mean IoU,N/A,0.6032,New Capability
+Healthy False Positive Rate,N/A,21.52%,Safe Backgrounding
+Total Parameters,"4,015,234","6,966,151","+2,950,917"
+Model Size (MB),15.61,26.86,++11.25
+GPU Mean Latency (ms),11.20,13.52,++2.32 ms
+GPU Throughput (FPS),89.3,74.0,-15.3 FPS
+Peak VRAM (MB),814.7,520.3,-294.4 MB

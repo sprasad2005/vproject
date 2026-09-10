@@ -1,0 +1,109 @@
+flowchart TB
+    %% Data Governance Subgraph
+    subgraph Data_Governance["Dataset Governance & Partitioning Protocol"]
+        direction TB
+        DG_Primary["Primary Field Dataset<br/>(N = 3,355 Images, 6 Classes)"] --> DG_Splits["Stratified Patient-Level Splits<br/>Train: 2,347 (70%) | Val: 334 (10%) | Test: 674 (20%)"]
+        DG_RiceSeg["RiceSeg5932 Benchmark<br/>(N = 4,348 Pixel-Level Lesion Masks)"] --> DG_Isolated["Strict XAI Ground-Truth Isolation<br/>(Zero Exposure to Training / Validation / Tuning)"]
+    end
+
+    %% Input and Preprocessing Subgraph
+    subgraph Input_Preprocessing["1. Input Ingestion & Preprocessing Pipeline"]
+        direction TB
+        IN_Raw["Raw Rice Leaf Image<br/>(Format: JPEG/PNG/WEBP, RGB)"] --> PP_Resize["Bilinear Interpolation<br/>Target Resolution: 224 x 224 x 3"]
+        PP_Resize --> PP_Tensor["Tensor Conversion<br/>torch.FloatTensor: [B, 3, 224, 224]"]
+        PP_Tensor --> PP_Norm["Channel Normalization<br/>mu = [0.485, 0.456, 0.406]<br/>sigma = [0.229, 0.224, 0.225]"]
+    end
+
+    %% Shared Feature Extraction Subgraph
+    subgraph Backbone_Extraction["2. Shared Deep Feature Extraction"]
+        direction TB
+        BB_In["Normalized Input Tensor<br/>[B, 3, 224, 224]"] --> BB_MBConv["EfficientNet-B0 Backbone<br/>Stages 1 to 8 MBConv Residual Blocks"]
+        BB_MBConv --> BB_FeatMap["Terminal Feature Representation<br/>Layer: features.8<br/>Tensor Shape: [B, 1280, 7, 7]"]
+    end
+
+    %% Multi-Task Bifurcation Subgraph
+    subgraph MultiTask_Branching["3. Multi-Task Bifurcated Prediction Heads"]
+        direction TB
+        
+        subgraph Cls_Head["Classification Branch"]
+            direction TB
+            CL_Pool["AdaptiveAvgPool2d(1 x 1)<br/>Spatial Squeeze -> [B, 1280, 1, 1]"] --> CL_Flat["Flatten Operation<br/>Feature Vector: [B, 1280]"]
+            CL_Flat --> CL_Drop["Dropout Regularization<br/>Dropout Rate: p = 0.20"]
+            CL_Drop --> CL_Linear["Linear Projection Layer<br/>torch.nn.Linear(1280, 6)"]
+            CL_Linear --> CL_Logits["6-Class Raw Logits<br/>y_hat in R^6"]
+            CL_Logits --> CL_Softmax["Softmax Normalization<br/>P(c | x) = exp(y_c) / sum(exp(y_j))"]
+            CL_Softmax --> CL_Pred["Predicted Disease Class<br/>+ Category Posterior Distribution"]
+        end
+
+        subgraph Loc_Head["Dense Spatial Localization Branch"]
+            direction TB
+            LC_Conv1["Conv2d(1280 -> 256, k=3, p=1, bias=False)"] --> LC_BN["BatchNorm2d(256)"]
+            LC_BN --> LC_Act["SiLU Activation (Swish)"]
+            LC_Act --> LC_Conv2["Conv2d(256 -> 5, k=1, bias=True)"]
+            LC_Conv2 --> LC_GridOut["Raw Localization Grid Output<br/>Shape: [B, 5, 7, 7]<br/>Channels: (l_obj, dx, dy, w, h)"]
+        end
+    end
+
+    %% Localization Decoding Subgraph
+    subgraph Loc_Decoding["4. Phase 3B Calibrated Localization Decoding"]
+        direction TB
+        DEC_In["Raw Localization Tensor [5, 7, 7]"] --> DEC_Sigmoid["Sigmoid Coordinate Transformation<br/>s_obj = sigmoid(l_obj)<br/>dx, dy, w, h = sigmoid(raw offsets)"]
+        DEC_Sigmoid --> DEC_Thresh["Confidence Threshold Filtering<br/>Rule: Keep cell (i,j) if s_obj >= tau<br/><b>Frozen Parameter: tau = 0.60</b>"]
+        DEC_Thresh --> DEC_Coord["Spatial Coordinate Reconstruction<br/>x_c = (j + dx) / 7, y_c = (i + dy) / 7<br/>box_w = w, box_h = h"]
+        DEC_Coord --> DEC_Clip["Bounding Box Boundary Clipping<br/>np.clip(coord, 0.0, 1.0)"]
+        DEC_Clip --> DEC_Rank["Confidence Ranking & Sorting<br/>Sort candidate boxes descending by s_obj"]
+        DEC_Rank --> DEC_TopK["Top-K Candidate Truncation<br/>Retain highest-scoring K boxes<br/><b>Frozen Parameter: K = 3</b>"]
+        DEC_TopK --> DEC_FinalBoxes["Calibrated Lesion Bounding Boxes<br/>List: [(x_c, y_c, w, h, confidence)]"]
+    end
+
+    %% Final Output Subgraph
+    subgraph Final_Output["5. Final Multi-Task Prediction Output"]
+        direction TB
+        OUT_Combine["Unified Diagnostic Representation"]
+        OUT_Cls["Primary Disease Class Label<br/>+ Classification Confidence"]
+        OUT_Loc["Calibrated Spatial Bounding Boxes<br/>+ Lesion Confidence Scores"]
+        OUT_Timing["Inference Telemetry<br/>GPU Model Latency: 10.46 ms"]
+        
+        OUT_Combine --> OUT_Cls
+        OUT_Combine --> OUT_Loc
+        OUT_Combine --> OUT_Timing
+    end
+
+    %% Offline Research Subgraph
+    subgraph Research_Evolution["OFFLINE RESEARCH MODEL EVOLUTION"]
+        direction TB
+        EV_P2B["Phase 2B: Baseline Classifier<br/>(EfficientNet-B0, Acc: 90.12%, F1: 0.8891)"] --> EV_P3["Phase 3: Initial Multi-Task<br/>(Unweighted BCE, High FPR: 21.52%)"]
+        EV_P3 --> EV_P3B["Phase 3B: Loss Refinement<br/>(Positive-Weight w_pos = 10.0, Smooth L1)"]
+        EV_P3B --> EV_Calib["Validation-Only Calibration Sweeps<br/>(Grid Sweep: tau in [0.1, 0.9], K in [1, 10])"]
+        EV_Calib --> EV_Frozen["Frozen Phase 3B Checkpoint<br/>(tau = 0.60, K = 3, IoU: 0.6423)"]
+    end
+
+    %% XAI Validation Subgraph
+    subgraph XAI_Validation["Phase 4 Quantitative XAI Validation (Offline Benchmark)"]
+        direction TB
+        XAI_Model["Evaluated Models<br/>(Phase 2B Baseline vs Phase 3B Calibrated)"] --> XAI_Hook["Gradient-Weighted Class Activation Mapping<br/>Target Layer: features.8 (Terminal Feature Map)"]
+        XAI_Hook --> XAI_Map["Attribution Saliency Heatmap L(u,v)<br/>Normalized to [0, 1], Resized to 224x224"]
+        DG_Isolated -.-> XAI_Bench["Independent RiceSeg5932 Lesion Masks<br/>(N = 4,348 Binary Biological Masks)"]
+        XAI_Map & XAI_Bench --> XAI_Metrics["Quantitative Attribution Metrics<br/>- Pointing Game (Mutually Correct): 38.21%<br/>- Deletion AUC (Faithfulness): 0.1367<br/>- Healthy Border Attention: 9.2% (-50.3%)<br/>- Attribution Entropy: 0.612 bits"]
+    end
+
+    %% Primary Pipeline Interconnections
+    Input_Preprocessing --> Backbone_Extraction
+    BB_FeatMap --> Cls_Head
+    BB_FeatMap --> Loc_Head
+    LC_GridOut --> Loc_Decoding
+    CL_Pred --> OUT_Combine
+    DEC_FinalBoxes --> OUT_Combine
+    EV_Frozen -.->|"Loads Weights to"| Backbone_Extraction
+
+    %% Styling
+    style Data_Governance fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#ffffff
+    style Input_Preprocessing fill:#0f172a,stroke:#64748b,stroke-width:2px,color:#ffffff
+    style Backbone_Extraction fill:#0f172a,stroke:#3b82f6,stroke-width:2px,color:#ffffff
+    style MultiTask_Branching fill:#0f172a,stroke:#8b5cf6,stroke-width:2px,color:#ffffff
+    style Cls_Head fill:#1e293b,stroke:#10b981,stroke-width:1px,color:#ffffff
+    style Loc_Head fill:#1e293b,stroke:#f59e0b,stroke-width:1px,color:#ffffff
+    style Loc_Decoding fill:#0f172a,stroke:#f59e0b,stroke-width:2px,color:#ffffff
+    style Final_Output fill:#0f172a,stroke:#10b981,stroke-width:2px,color:#ffffff
+    style Research_Evolution fill:#1e1e2e,stroke:#94a3b8,stroke-dasharray: 5 5,stroke-width:1px,color:#ffffff
+    style XAI_Validation fill:#1e1e2e,stroke:#ec4899,stroke-dasharray: 5 5,stroke-width:1px,color:#ffffff

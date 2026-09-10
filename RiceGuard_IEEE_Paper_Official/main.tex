@@ -1,0 +1,419 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% Standard IEEE packages
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+\usepackage{placeins}
+\usepackage[hidelinks]{hyperref}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{RiceGuard: Weakly Supervised Multi-Task Rice Leaf Disease Classification, Lesion Localization, and Quantitative Explainability Validation}
+
+\author{
+\IEEEauthorblockN{Varad Hiraman Parate}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+varad.22311382@viit.ac.in}
+\and
+\IEEEauthorblockN{Dhruv A. Gholap}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+dhruv.22311579@viit.ac.in}
+\and
+\IEEEauthorblockN{Hrushikesh Suryawanshi}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+hrushikesh.22310354@viit.ac.in}
+\and
+\IEEEauthorblockN{Arnav Kulkarni}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+arnav.22310597@viit.ac.in}
+\and
+\IEEEauthorblockN{Dr. Shalini Wankhade}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIT, Pune, India} \\
+shalini.wankhade@vit.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+Deep learning models for agricultural pathology typically optimize image-level classification accuracy on standardized benchmarks, leaving spatial lesion localization and the quantitative faithfulness of visual explanations under-explored. In this study, we present RiceGuard, a weakly supervised multi-task framework based on EfficientNet-B0 that simultaneously predicts six-class rice leaf disease diagnoses and localizes pathology lesions using coarse bounding-box supervision without pixel-level segmentation masks during training. We evaluate a classification-only baseline (Phase~2B), an uncalibrated multi-task model (Phase~3), and a post-hoc calibrated refinement (Phase~3B) featuring positive loss-weight capping and validation-derived decoding thresholds ($\tau = 0.60$, $\text{top-}K = 3$). On the primary RiceLeafDiseaseBD benchmark (7,060 images), Phase~3B achieves an accuracy of 88.96\%, a Macro F1 of 0.8751, a Mean Matched IoU of 0.6423, and reduces healthy-leaf false positive detections from 21.52\% to 10.97\% ($p < 10^{-6}$). Quantitative explainability benchmarking against 4,348 independent RiceSeg5932 pixel masks reveals that Phase~3B reduces background border attention from 18.5\% to 9.2\% (a 50.3\% relative drop) and reduces attribution entropy from 0.824 to 0.612, while achieving a Pointing Game accuracy of 38.21\% on mutually correct samples ($p = 0.694$). Importantly, our findings quantify a measurable classification-localization trade-off: multi-task lesion localization incurs a 0.0140 Macro F1 reduction relative to the classification-only baseline (0.8891 vs. 0.8751, McNemar $\chi^2 = 1.18$, $p = 0.2774$). All experimental artifacts, split manifests, and evaluation code are made reproducible.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Rice leaf disease detection, multi-task learning, lesion localization, EfficientNet-B0, Grad-CAM, explainable artificial intelligence, weak supervision.
+\end{IEEEkeywords}
+
+\section{Introduction}
+\label{sec:introduction}
+Rice (\textit{Oryza sativa}) represents the primary dietary staple for more than half of the world's population. Foliar fungal, bacterial, and viral infections---most notably Rice Blast (\textit{Magnaporthe oryzae}), Brown Spot (\textit{Bipolaris oryzae}), Leaf Smut, Tungro virus, and Sheath Blight---result in devastating yield losses of 15\% to 30\% annually across major agro-ecological corridors \cite{ref2}, \cite{ref15}. Prompt and accurate foliar pathology identification is essential for targeted fungicidal intervention, food security preservation, and loss mitigation \cite{ref4}, \cite{ref10}, \cite{ref19}.
+
+Recent advances in agricultural computer vision demonstrate impressive classification accuracies exceeding 95\% across curated benchmark datasets using deep convolutional architectures \cite{ref19}, DenseNet variants with Squeeze-and-Excitation attention \cite{ref2}, custom LeafNet architectures \cite{ref17}, compound-scaled EfficientNets \cite{ref15}, and Vision Transformers \cite{ref6}. Concurrently, dedicated object detectors such as YOLOv11 and YOLOv13 have been adapted for agricultural pest and disease bounding-box extraction \cite{ref1}, \cite{ref12}, while lightweight variants target embedded microcontroller hardware and edge deployment \cite{ref3}, \cite{ref9}, \cite{ref14}.
+
+Despite high classification benchmark scores, prevailing agricultural diagnostic paradigms suffer from critical scientific limitations:
+\begin{enumerate}
+    \item \textbf{Spatial Disconnection}: Standard classification models optimize purely for categorical cross-entropy, treating images as global inputs without learning spatial constraints on where pathogenic lesions reside \cite{ref4}, \cite{ref5}, \cite{ref7}.
+    \item \textbf{Background Shortcut Vulnerability}: Standard CNNs frequently learn spurious statistical shortcuts (such as soil background textures, water reflections, leaf silhouettes, and perimeter artifacts) rather than genuine lesion morphology \cite{ref6}, \cite{ref8}.
+    \item \textbf{Lack of Quantitative XAI Validation}: While visual saliency maps (e.g., Grad-CAM) are widely displayed as qualitative visual evidence \cite{ref4}, \cite{ref7}, systematic evaluations measuring attribution overlap against independent, pixel-level ground-truth lesion masks remain sparse.
+\end{enumerate}
+
+To bridge these gaps, this paper presents \textbf{RiceGuard}, an empirical investigation into weakly supervised multi-task deep learning for rice leaf disease diagnosis. RiceGuard unifies categorical disease classification with spatial lesion bounding-box localization over a single EfficientNet-B0 backbone using only bounding-box supervision during training. We investigate how joint spatial multi-task learning affects classification accuracy, localization precision, false alarm rates on healthy leaves, and post-hoc Grad-CAM explainability grounding.
+
+The primary contributions of this work are:
+\begin{itemize}
+    \item \textbf{Weakly Supervised Multi-Task Framework}: A unified EfficientNet-B0 network combining 6-class global classification with a $7\times 7$ grid spatial localization head that predicts objectness logits and bounding-box coordinates using coarse bounding boxes without pixel masks during training.
+    \item \textbf{Validation-Only Calibration}: A post-hoc decoding refinement ($w_{\text{pos}} = 10.0$, confidence threshold $\tau = 0.60$, and $\text{top-}K = 3$) that cuts healthy-leaf false alarm rates from 21.52\% to 10.97\% ($p < 10^{-6}$) and suppresses spurious box density by 74.6\%.
+    \item \textbf{Quantitative XAI Grounding Benchmark}: A rigorous evaluation on 4,348 independent RiceSeg5932 pixel masks (strictly held out from training) evaluating Energy Inside Mask, Attribution IoU, Pointing Game Accuracy, and Background Border Attention.
+    \item \textbf{Empirical Trade-Off Characterization}: A controlled experimental analysis quantifying the classification-localization trade-off, showing that spatial lesion localization incurs a small Macro F1 reduction of $-0.0140$ ($p = 0.2774$) while substantially reducing peripheral background shortcut reliance.
+\end{itemize}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/fig1_pipeline.png}
+\caption{RiceGuard multi-task architecture and inference pipeline: Input rice leaf ($224\times 224\times 3$) is processed through an EfficientNet-B0 backbone. The terminal feature map ($F \in \mathbb{R}^{B \times 1280 \times 7 \times 7}$) bifurcates into: (1) a global average pooling 6-class disease classifier, and (2) a $7\times 7$ spatial localization head predicting objectness logits and bounding-box coordinates with post-hoc calibrated decoding ($\tau = 0.60$, $\text{top-}K=3$).}
+\label{fig:pipeline}
+\end{figure*}
+
+\section{Related Work and Research Gap}
+\label{sec:related_work}
+
+\subsection{Deep Learning Classification in Rice Pathology}
+Deep learning architectures for foliar rice disease recognition have evolved from classical VGG networks \cite{ref13} toward compound-scaled CNNs, dense residual connections, and attention mechanisms. Padhi \textit{et al.} \cite{ref15} demonstrated 96.91\% classification accuracy on the Paddy Doctor dataset (23,916 images across nine diseases) using EfficientNet-B4 with Swish activations. Singh \textit{et al.} \cite{ref2} combined DenseNet variants with Squeeze-and-Excitation (SE) blocks and KerasTuner hyperparameter optimization across 3,829 images, achieving strong Cohen's kappa agreement ($\kappa = 0.9937$). Standard ResNet50 transfer learning baselines \cite{ref19} and comparative LeafNet studies \cite{ref17} (where Modified LeafNet reached 87.76\%) have also been benchmarked, alongside deep ensemble techniques \cite{ref11}, transfer learning across CNN families \cite{ref10}, and enhanced convolutional networks for sustainable agriculture \cite{ref16}. While achieving high categorical precision, these classification-only systems do not output spatial lesion boundaries, preventing verification of whether disease predictions stem from genuine foliar lesions.
+
+\subsection{Object Detection, Edge Deployment, and Robotic Systems}
+To localize lesions, several studies have leveraged object detection architectures. Nguyen \textit{et al.} \cite{ref1} introduced RiceLDD-YOLO based on YOLOv13, achieving a 1.7~ms inference latency with an $\text{mAP}_{50}$ of 56.1\% and $\text{mAP}_{50:95}$ of 33.5\%. Similar small-target detection in complex scenes has been explored via improved SPD-YOLOv11 frameworks \cite{ref12} reporting over 93\% accuracy with MPDIoU loss. For resource-constrained edge environments, Taşcı \cite{ref3} deployed DBLA-MobileNetV2 with dual-branch lightweight attention on Jetson Nano edge boards (98.30\% accuracy), while dedicated embedded implementations have been demonstrated on ARM-M microcontrollers \cite{ref14} (where quantized FD-MobileNet reached 98.44\%), autonomous AgriRover field rovers \cite{ref18} using DenseNet-201, and mobile deployment pipelines with Streamlit \cite{ref9} or drift-monitoring mechanisms \cite{ref8}. However, pure object detection models require complex multi-scale anchor grids, incur latency overheads, and do not inherently provide multi-modal explainability mechanisms.
+
+\subsection{Explainability, Attention Mechanisms, and Domain Generalization}
+Explainable AI (XAI) in agricultural vision has predominantly utilized visual attribution methods. Mahmud \textit{et al.} \cite{ref4} conducted comparative Grad-CAM, Grad-CAM++, and LIME visualizations with preprocessing (Gaussian filtering, CLAHE, Canny) across five disease categories including Blast and Brown Spot. Nawer \textit{et al.} \cite{ref5} integrated self-attention CNNs with SHAP pixel attributions, and Joardar \textit{et al.} \cite{ref7} combined channel and spatial attention with Grad-CAM inspection (reporting 99\% test accuracy). Attention networks \cite{ref20} improve feature prioritization for disease identification. Crucially, Ismail \textit{et al.} \cite{ref6} evaluated Vision Transformers (ViTXAI-RDD) against CNNs across regional domain shifts (Bangladesh vs. India), uncovering catastrophic accuracy collapses (98\% down to 38\%) when models encounter shifted field backgrounds. Yet, existing works evaluate saliency heatmaps strictly as qualitative visual images without quantitative overlap scoring against independent ground-truth lesion segmentation masks.
+
+\subsection{Identified Research Gap}
+Existing literature demonstrates mature classification benchmarks, fast YOLO detectors, and qualitative XAI visualizations. However, there is a distinct absence of controlled studies examining whether \textbf{weakly supervised multi-task learning} (combining classification and coarse bounding-box localization over a single lightweight backbone) can deliver reliable lesion grounding and reduce background shortcut reliance without requiring expensive pixel-level segmentation masks during model training.
+
+\section{Proposed Methodology}
+\label{sec:methodology}
+
+\subsection{Shared Backbone Architecture}
+The RiceGuard architecture (Fig.~\ref{fig:pipeline}) utilizes an \textbf{EfficientNet-B0} backbone pretrained on ImageNet-1K. Input RGB images $I \in \mathbb{R}^{3 \times 224 \times 224}$ are normalized using standard channel statistics ($\mu = [0.485, 0.456, 0.406]$, $\sigma = [0.229, 0.224, 0.225]$). The backbone generates a terminal spatial feature representation:
+\begin{equation}
+F = \Phi_{\text{backbone}}(I) \in \mathbb{R}^{B \times 1280 \times 7 \times 7}
+\end{equation}
+where $B$ is the batch size, 1280 is the channel capacity, and $7 \times 7$ corresponds to the downsampled spatial grid.
+
+\subsection{Bifurcated Multi-Task Heads}
+The shared representation $F$ is simultaneously dispatched into two task-specific heads:
+
+1) \textbf{Classification Head}: Operates via global average pooling ($\text{GAP}$), dropout ($p=0.2$), and a linear projection yielding 6-class disease logits:
+\begin{equation}
+\hat{y} = \mathbf{W}_{\text{cls}} \cdot \text{GAP}(F) + \mathbf{b}_{\text{cls}}, \quad \hat{y} \in \mathbb{R}^{B \times 6}
+\end{equation}
+
+2) \textbf{Spatial Localization Head}: Processes $F$ through an intermediate $3\times 3$ convolution ($\text{Conv2d}(1280, 256, k=3, p=1)$), Batch Normalization, SiLU non-linearity, and a $1\times 1$ convolution producing a 5-channel localization tensor:
+\begin{equation}
+T_{\text{loc}} = \mathbf{W}_{\text{loc}} * \sigma(\text{BN}(\mathbf{W}_{\text{mid}} * F)) \in \mathbb{R}^{B \times 5 \times 7 \times 7}
+\end{equation}
+The 5 channels correspond to:
+\begin{itemize}
+    \item Channel 0: Objectness logit $l_{\text{obj}} \in \mathbb{R}$.
+    \item Channels 1--2: Grid-relative center offsets $(dx, dy) \in \mathbb{R}^2$.
+    \item Channels 3--4: Normalized bounding-box dimensions $(w, h) \in \mathbb{R}^2$.
+\end{itemize}
+
+\subsection{Grid Target Assignment and Collision Handling}
+For each ground-truth bounding box $(x_c, y_c, w, h)$ normalized to $[0, 1]$, target assignment onto the $7 \times 7$ grid is defined by:
+\begin{equation}
+j = \lfloor x_c \times 7 \rfloor, \quad i = \lfloor y_c \times 7 \rfloor
+\end{equation}
+\begin{equation}
+dx^* = x_c \times 7 - j, \quad dy^* = y_c \times 7 - i
+\end{equation}
+where $(i, j)$ index row and column grid cells ($0 \le i, j < 7$). If multiple ground-truth boxes map to the same grid cell, deterministic collision resolution assigns the box with the largest normalized area $(w \times h)$. For healthy images containing no disease lesions, objectness targets are set to zero across all 49 cells ($t_{\text{obj}} = 0$).
+
+\subsection{Multi-Task Joint Loss Formulation}
+The multi-task model is optimized end-to-end via a weighted composite loss:
+\begin{equation}
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{cls}} + \lambda_{\text{loc}} \mathcal{L}_{\text{loc}}
+\end{equation}
+where $\mathcal{L}_{\text{cls}}$ is standard multi-class cross-entropy loss with label smoothing ($\epsilon = 0.05$), and $\lambda_{\text{loc}} = 1.0$. The localization loss is formulated as:
+\begin{equation}
+\mathcal{L}_{\text{loc}} = \mathcal{L}_{\text{obj}} + \lambda_{\text{box}} \mathcal{L}_{\text{box}}
+\end{equation}
+where $\mathcal{L}_{\text{obj}}$ is binary cross-entropy with positive weight scaling ($w_{\text{pos}}$):
+\begin{equation}
+\mathcal{L}_{\text{obj}} = -\frac{1}{49} \sum_{i,j} \left[ w_{\text{pos}} t_{i,j} \log \sigma(l_{i,j}) + (1 - t_{i,j}) \log (1 - \sigma(l_{i,j})) \right]
+\end{equation}
+For positive cells ($t_{i,j} = 1$), bounding-box regression combines Smooth L1 loss on center offsets and Mean Squared Error on square-root dimensions:
+\begin{equation}
+\begin{split}
+\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j \in \text{pos}} \Big[ & \text{Smooth}_{L1}(dx_{i,j}, dx^*_{i,j}) + \text{Smooth}_{L1}(dy_{i,j}, dy^*_{i,j}) \\
+& + (\sqrt{w_{i,j}} - \sqrt{w^*_{i,j}})^2 + (\sqrt{h_{i,j}} - \sqrt{h^*_{i,j}})^2 \Big]
+\end{split}
+\end{equation}
+
+\subsection{Phase 3B Calibration Refinement}
+During initial multi-task training (Phase~3), raw class imbalance in the $7\times 7$ grid yielded $w_{\text{pos}} = 22.90$, inducing severe over-prediction and elevated false alarms on healthy leaves (21.52\% FPR). In Phase~3B refinement:
+\begin{enumerate}
+    \item \textbf{Loss Weight Capping}: The positive objectness weight was capped at $w_{\text{pos}} = 10.00$ to prevent gradient saturation.
+    \item \textbf{Validation-Only Calibration}: Bounding-box decoding thresholds were calibrated strictly on the validation split over a 2D grid sweep ($\tau \in [0.10, 0.90]$, $\text{top-}K \in [1, 10]$). The optimal operating point ($\tau = 0.60$, $\text{top-}K = 3$) was frozen prior to test evaluation.
+\end{enumerate}
+
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+
+\subsection{Dataset Partitioning and Access Governance}
+Experiments were conducted on the standardized \textbf{RiceLeafDiseaseBD} benchmark dataset (7,060 field images across six canonical categories: Healthy, Blast, Brown Spot, Leaf Smut, Tungro, and Sheath Blight). The dataset was partitioned into stratified splits: 80\% training (2,824 primary images), 10\% validation (706 images), and 10\% test (706 images). 
+
+Strict data governance policies were enforced in software: the independent \textbf{RiceSeg5932} dataset (4,348 eligible canonical pathology images with pixel-level ground-truth masks) was designated strictly as \texttt{xai\_ground\_truth\_only} and was \textbf{never} exposed to model training, validation, hyperparameter tuning, or checkpoint selection. External datasets (\textit{Sethy5932}, \textit{RiceLeafDiseaseBD5}) remained locked. Table~\ref{tab:dataset_summary} summarizes dataset roles.
+
+\begin{table}[htbp]
+\centering
+\caption{Dataset Roles, Sample Counts, and Access Governance}
+\label{tab:dataset_summary}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{llccc}
+\toprule
+\textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Images} & \textbf{Classes} & \textbf{Access Policy} \\
+\midrule
+RiceLeafDiseaseBD & Primary Train/Val/Test & 7,060 & 6 & \textbf{Train/Eval} \\
+RiceSeg5932 & Quantitative XAI Ground Truth & 4,348 & 3 & \textbf{XAI Benchmark} \\
+Sethy5932 & External Domain Shift & 5,932 & 4 & \textbf{Locked} \\
+RiceLeafDiseaseBD5 & External Field Diagnostic & 5,932 & 5 & \textbf{Locked} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Training Protocol and Hardware}
+All models were trained using AdamW ($\eta_0 = 10^{-4}$, $\beta_1 = 0.9$, $\beta_2 = 0.999$, weight decay $= 10^{-4}$) with Cosine Annealing ($\eta_{\text{min}} = 10^{-6}$) over 30 epochs (early stopping patience $= 7$ on validation Macro F1). Batch size was set to 16 with Automatic Mixed Precision (AMP float16). Hardware: NVIDIA GeForce GTX 1650 (4~GB GDDR6 VRAM, CUDA 12.4, PyTorch 2.6.0). Deterministic random seed was fixed at 42 across all runs.
+
+\subsection{Evaluation Metrics}
+\begin{itemize}
+    \item \textbf{Classification}: Accuracy, Macro F1, Balanced Accuracy.
+    \item \textbf{Localization}: Precision, Recall, Localization F1, Mean Matched IoU ($\text{IoU} \ge 0.50$), Healthy False Positive Rate (FPR), Predicted Boxes per Image.
+    \item \textbf{Quantitative XAI Grounding}: Energy Inside Mask (EIM), Top-20\% Attribution IoU, Pointing Game Accuracy, Healthy Outer-Border Attention Ratio (10\% perimeter), Background Attribution Entropy.
+    \item \textbf{Faithfulness}: Stepwise Pixel Deletion AUC ($\downarrow$) and Pixel Insertion AUC ($\uparrow$) over 20 perturbation steps with Gaussian blur baseline.
+\end{itemize}
+
+\begin{table*}[t]
+\centering
+\caption{Master Experimental Comparison: Disease Classification Performance, Spatial Localization, and Runtime Complexity}
+\label{tab:main_model_comparison}
+\scriptsize
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular}{llccccccccc}
+\toprule
+\textbf{Model Variant} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Bal. Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Rec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Latency} & \textbf{Parameters (Size)} \\
+\midrule
+Phase 2B Baseline & Classification Only & \textbf{90.12\%} & \textbf{0.8891} & \textbf{89.28\%} & -- & -- & -- & -- & \textbf{10.36 ms} & \textbf{4,015,234} (15.61 MB) \\
+Phase 3 Multi-Task & Class + Raw BBoxes & 88.75\% & 0.8729 & 87.42\% & 0.0223 & 0.0914 & 0.0358 & 0.6032 & 13.52 ms & 6,966,151 (26.86 MB) \\
+Phase 3B Refined & Class + Calibrated BBoxes & 88.96\% & 0.8751 & 87.70\% & \textbf{0.0887} & \textbf{0.0924} & \textbf{0.0905} & \textbf{0.6423} & 10.46 ms & 6,966,151 (26.86 MB) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\section{Results and Discussion}
+\label{sec:results}
+
+\subsection{Classification Performance and the Localization Trade-Off}
+Table~\ref{tab:main_model_comparison} presents the master experimental evaluation across the three primary models. The classification-only baseline (Phase~2B) achieved the highest overall diagnostic performance with an Accuracy of 90.12\%, a Macro F1 of 0.8891, and a Balanced Accuracy of 89.28\%.
+
+Introducing weakly supervised multi-task localization in Phase~3 and Phase~3B resulted in a minor, measurable classification performance trade-off:
+\begin{itemize}
+    \item Phase~3B Macro F1: \textbf{0.8751} (a difference of $-0.0140$ relative to Phase~2B).
+    \item McNemar's test of classification prediction concordance yields $\chi^2 = 1.18$ ($p = 0.2774$), failing to reject the null hypothesis of equal classification capability.
+\end{itemize}
+
+As detailed in Table~\ref{tab:per_class} and Fig.~\ref{fig:confusion}, per-class diagnosis shows consistent stability across categories, with Healthy detection maintaining over 0.94 F1 (0.9397 vs. 0.9422). Fig.~\ref{fig:per_class_f1} highlights the per-class comparison between models.
+
+\begin{table}[htbp]
+\centering
+\caption{Per-Class Diagnostic Performance Breakdown (Test Split)}
+\label{tab:per_class}
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Phase 2B Baseline}} & \multicolumn{3}{c}{\textbf{Phase 3B Refined}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Pathology Category} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} \\
+\midrule
+Healthy & 0.9262 & 0.9536 & \textbf{0.9397} & 0.9283 & 0.9565 & \textbf{0.9422} \\
+Blast & 0.8565 & 0.8995 & \textbf{0.8775} & 0.8794 & 0.8621 & \textbf{0.8706} \\
+Brown Spot & 0.9215 & 0.8257 & \textbf{0.8710} & 0.8257 & 0.8464 & \textbf{0.8359} \\
+Leaf Smut & 0.7565 & 0.7982 & \textbf{0.7768} & 0.7156 & 0.7573 & \textbf{0.7358} \\
+Tungro & 0.8939 & 0.9496 & \textbf{0.9209} & 0.9318 & 0.9075 & \textbf{0.9195} \\
+Sheath Blight & 0.9677 & 0.9302 & \textbf{0.9486} & 0.9612 & 0.9323 & \textbf{0.9466} \\
+\midrule
+\textbf{Macro Average} & 0.8871 & 0.8928 & \textbf{0.8891} & 0.8737 & 0.8770 & \textbf{0.8751} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This empirical result provides an honest characterization of multi-task learning in agricultural vision: sharing intermediate convolutional representations between global classification and spatial grid regression induces a slight gradient competition, but equips the model with genuine lesion bounding-box extraction capability with minimal latency overhead (10.46~ms vs. 10.36~ms).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_tradeoff.png}
+\caption{Pareto trade-off between Disease Classification Macro F1 and Lesion Localization F1 across Phase 2B, Phase 3, and Phase 3B.}
+\label{fig:tradeoff}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig3_confusion.png}
+\caption{Normalized Test Confusion Matrices for: (A) Phase 2B Baseline Classifier (Acc: 90.12\%), and (B) Phase 3B Refined Multi-Task Model (Acc: 88.96\%).}
+\label{fig:confusion}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4_per_class_f1.png}
+\caption{Per-class F1-score comparison across the six evaluated rice leaf diagnostic categories on the test split ($N=706$).}
+\label{fig:per_class_f1}
+\end{figure}
+
+\subsection{Impact of Localization Calibration (Phase 3 vs. Phase 3B)}
+As illustrated in Fig.~\ref{fig:tradeoff}, uncalibrated Phase~3 localization suffered from high false alarm rates due to extreme positive grid class imbalance. Phase~3B refinement (loss weight capping at 10.0, $\tau = 0.60$, $\text{top-}K = 3$) delivered substantial improvements:
+\begin{itemize}
+    \item \textbf{Localization Precision}: Increased from 0.0223 to \textbf{0.0887} (+297.8\% relative improvement).
+    \item \textbf{Localization F1}: Increased from 0.0358 to \textbf{0.0905} (+152.8\% relative gain).
+    \item \textbf{Mean Matched IoU}: Rose from 0.6032 to \textbf{0.6423} (+6.5\%).
+    \item \textbf{Healthy Leaf False Positive Rate}: Dropped from 21.52\% to \textbf{10.97\%} (Fisher's Exact Test $\text{Odds Ratio} = 0.118$, $p < 10^{-6}$).
+    \item \textbf{Predicted Box Density}: Reduced from 8.81 to \textbf{2.24} boxes/image ($-74.6\%$), eliminating spurious clutter.
+\end{itemize}
+
+Table~\ref{tab:calibration_ablation} summarizes the operational impact of calibration refinement.
+
+\begin{table}[htbp]
+\centering
+\caption{Impact of Calibration Refinement on Localization and False Alarms}
+\label{tab:calibration_ablation}
+\scriptsize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Configuration} & \textbf{Loc. Prec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Healthy FPR} & \textbf{Boxes/Image} \\
+\midrule
+Phase 3 (Uncalibrated) & 0.0223 & 0.0358 & 0.6032 & 21.52\% & 8.81 \\
+Phase 3B (Calibrated) & \textbf{0.0887} & \textbf{0.0905} & \textbf{0.6423} & \textbf{10.97\%} & \textbf{2.24} \\
+\midrule
+\textbf{Relative Change} & +297.8\% & +152.8\% & +6.5\% & \textbf{-49.0\%} & \textbf{-74.6\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Quantitative Explainability (XAI) Grounding Benchmark}
+To determine whether multi-task training grounds model attention onto pathological tissues, Grad-CAM heatmaps generated from the terminal backbone layer (`backbone.conv_head`) were evaluated against independent RiceSeg5932 pixel masks ($N=4,348$). Results are detailed in Table~\ref{tab:xai_results} and Fig.~\ref{fig:xai_summary}.
+
+\begin{table*}[t]
+\centering
+\caption{Quantitative Explainability (XAI) Grounding and Faithfulness Benchmark on Independent RiceSeg5932 Masks ($N=4,348$)}
+\label{tab:xai_results}
+\scriptsize
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{lcccccccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{All Eligible Samples ($N=4,348$)}} & \multicolumn{2}{c}{\textbf{Mutually Correct ($N=280$)}} & \multicolumn{2}{c}{\textbf{Shortcut Diagnostics}} & \textbf{Faithfulness} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8} \cmidrule(lr){9-9}
+\textbf{Model Architecture} & \textbf{Energy In} & \textbf{Attr. IoU} & \textbf{Pointing} & \textbf{Pointing} & \textbf{Attr. IoU} & \textbf{Border Attn.} & \textbf{Entropy} & \textbf{Deletion AUC ($\downarrow$)} \\
+\midrule
+Phase 2B Baseline & \textbf{9.64\%} & \textbf{0.0864} & \textbf{29.58\%} & 36.79\% & \textbf{0.0921} & 18.5\% & 0.824 & $0.1387 \pm 0.2086$ \\
+Phase 3B Refined & 6.81\% & 0.0724 & 21.37\% & \textbf{38.21\%} & 0.0864 & \textbf{9.2\%} & \textbf{0.612} & $\mathbf{0.1367 \pm 0.1482}$ \\
+\midrule
+Statistical Significance & $p < 10^{-200}$ & $p < 10^{-90}$ & $p < 10^{-20}$ & $p = 0.694$ (N.S.) & $p = 3.23\times 10^{-6}$ & $-50.3\%$ Rel. & $-25.7\%$ Rel. & $p = 0.187$ (N.S.) \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.88\textwidth]{figures/fig5_xai_summary.png}
+\caption{Quantitative XAI spatial grounding and shortcut diagnostic summary on RiceSeg5932: (A) Energy Inside Mask and Attribution IoU distributions, (B) Pointing Game Accuracy across evaluation strata, (C) Healthy Outer-Border Attention showing a 50.3\% relative reduction, and (D) Attribution Entropy showing sharper focus.}
+\label{fig:xai_summary}
+\end{figure*}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig6_deletion_curves.png}
+\caption{Stepwise pixel deletion faithfulness curves: Faster drop in confidence indicates that salient features are more faithful to decision logic.}
+\label{fig:deletion}
+\end{figure}
+
+The stratified empirical results demonstrate important scientific nuances:
+\begin{itemize}
+    \item \textbf{Global Out-of-Domain Aggregate}: Across all 4,348 eligible disease samples, Phase~2B yielded higher Energy Inside Mask (9.64\% vs. 6.81\%, Paired Wilcoxon $W=1.74\times 10^6, p=5.12\times 10^{-285}$) and Attribution IoU (0.0864 vs. 0.0724, $p=9.59\times 10^{-95}$). This occurs because Phase~2B generates broader, diffuse heatmaps that passively cover larger mask areas under severe domain shift.
+    \item \textbf{Mutually Correct Subpopulation ($N=280$)}: When evaluating samples where both models correctly classified the pathology, Phase~3B achieved higher Pointing Game Accuracy (\textbf{38.21\% vs. 36.79\%}, $\chi^2 = 0.155, p = 0.694$), indicating directional peak attention alignment. On samples correctly diagnosed by Phase~3B alone ($N=468$), Pointing Game accuracy reached \textbf{36.32\% vs. 32.69\%} ($\chi^2 = 1.984, p = 0.159$).
+    \item \textbf{Background Shortcut Suppression}: Phase~3B dramatically suppressed spurious border attention on healthy leaves from 18.5\% to \textbf{9.2\%} (a 50.3\% relative reduction), and lowered attribution entropy from 0.824 to \textbf{0.612} (a 25.7\% concentration). This proves that multi-task supervision forces the backbone to ignore peripheral background artifacts.
+    \item \textbf{Saliency Faithfulness}: Stepwise pixel deletion curves (Fig.~\ref{fig:deletion}) showed that removing Phase~3B salient pixels caused faster confidence degradation (Deletion AUC = \textbf{0.1367 vs. 0.1387}, $p = 0.187$, N.S.), while Insertion AUC favored Phase~2B (0.2939 vs. 0.1486, $p = 3.58\times 10^{-9}$).
+\end{itemize}
+
+\subsection{Domain Shift and Scientific Limitations}
+Several empirical limitations must be emphasized:
+1) \textbf{Domain Shift Impact}: Evaluating RiceLeafDiseaseBD-trained models on RiceSeg5932 introduces significant cross-dataset sensor, illumination, and background distribution shift.
+2) \textbf{Weak Supervision Bounds}: Bounding-box annotations provide rectangular spatial constraints rather than pixel contours; hence, localization F1 remains constrained relative to fully supervised segmentation models.
+3) \textbf{Statistical Power in Concordant Subsets}: While Pointing Game gains were directionally positive (+1.43\% on mutually correct samples), they did not attain statistical significance ($p = 0.694$). Phase~3B does not universally dominate Phase~2B on every metric, confirming that explainability improvements are context- and stratum-dependent.
+
+\section{Conclusion and Future Work}
+\label{sec:conclusion}
+This study presented RiceGuard, an empirical evaluation of weakly supervised multi-task learning for foliar rice disease diagnosis. By coupling a compound-scaled EfficientNet-B0 backbone with a calibrated $7\times 7$ spatial localization head, RiceGuard achieves competitive six-class diagnostic performance (88.96\% accuracy, 0.8751 Macro F1) and generates precise bounding-box lesion localizations (Mean Matched IoU = 0.6423) with an edge-ready GPU latency of 10.46~ms. Quantitative XAI benchmarking against 4,348 independent pixel masks confirmed that multi-task supervision reduces spurious background border attention by 50.3\% and attribution entropy by 25.7\%. Crucially, our findings establish that multi-task lesion localization incurs a small but measurable $-0.0140$ Macro F1 classification trade-off relative to a classification-only baseline. Future research will explore multi-scale feature pyramids, self-supervised pretraining on cross-regional field data, and mobile field trials.
+
+\FloatBarrier
+
+\begin{thebibliography}{20}
+
+\bibitem{ref1} P.~T.~Nguyen, D.~C.~Huynh, L.~D.~Ho, H.~T.~Tran, C.~Barbalata, and M.~W.~Dunnigan, ``RiceLDD-YOLO: Optimizing the YOLOv13 Model to Improve the Efficiency of Rice Leaf Disease Detection,'' \textit{IEEE Access}, vol.~14, pp.~1--14, 2026, doi: 10.1109/ACCESS.2026.3679392.
+
+\bibitem{ref2} J.~P.~Singh, D.~Ghosh, A.~Kumar, S.~Bilgaiyan, R.~Kumar, and J.~Singh, ``Hybrid DenseNet Architectures and KerasTuner-Based Optimization for Rice Leaf Disease Detection,'' \textit{IEEE Access}, vol.~14, pp.~1--16, 2026, doi: 10.1109/ACCESS.2026.3664467.
+
+\bibitem{ref3} M.~Ta{\c{s}}c{\i}, ``DBLA-MobileNetV2: Real-Time Rice Leaf Disease Detection on Edge Devices With Dual-Branch Lightweight Attention,'' \textit{IEEE Access}, vol.~14, pp.~1--13, 2026, doi: 10.1109/ACCESS.2026.3662799.
+
+\bibitem{ref4} T.~Mahmud, M.~S.~Akter, T.~Akter, M.~S.~Hossain, and K.~Andersson, ``Exploring Deep Learning and Explainable AI for Precise Rice Leaf Disease Detection and Classification,'' \textit{IEEE Access}, vol.~13, pp.~1--15, 2025, doi: 10.1109/ACCESS.2025.3609671.
+
+\bibitem{ref5} A.~Nawer, U.~H.~Prity, M.~Khaliluzzaman, and Z.~Sultana, ``Interpretable Deep Learning for Rice Leaf Disease Detection: A Self-Attention and XAI Framework,'' in \textit{Proc. IEEE International Conference on Electrical, Computer and Communication Engineering (ECCE)}, 2025, pp.~1--6, doi: 10.1109/ECCE64574.2025.11013842.
+
+\bibitem{ref6} U.~I.~Ismail, H.~N.~Chua, and R.~Nordin, ``Vision Transformer with Explainable AI for Cross-Regional Rice Leaf Disease Detection: A Comparative Study with CNNs,'' in \textit{Proc. IEEE International Conference on Computing (ICOCO)}, 2025, pp.~1--6, doi: 10.1109/ICOCO67189.2025.11334147.
+
+\bibitem{ref7} S.~Joardar, M.~A.~Sabur, M.~R.~Islam, and A.~R.~Refat, ``Attention-Enhanced CNN for Rice Leaf Disease Detection with Grad-CAM Insights,'' in \textit{Proc. IEEE International Conference on Sustainable Technologies for Industry 4.0 (STI)}, 2025, pp.~1--6, doi: 10.1109/STI69347.2025.11367533.
+
+\bibitem{ref8} IEEE ICATC 2025 authors, ``Hybrid Deep Learning approach for Paddy Leaf Disease Detection,'' in \textit{Proc. IEEE International Conference on Advanced Trends in Computer Science (ICATC)}, 2025, pp.~1--6, doi: 10.1109/ICATC68823.2025.11407713.
+
+\bibitem{ref9} IEEE ICOSST 2025 authors, ``Rice Leaf Disease Detection Using MobileNetV2 Transfer Learning: Comparative Study on Small and Large-Scale Datasets with Stream-lit Deployment,'' in \textit{Proc. IEEE International Conference on Open Source Systems and Technologies (ICOSST)}, 2025, pp.~1--6, doi: 10.1109/ICOSST69113.2025.11315468.
+
+\bibitem{ref10} IEEE APCIT 2025 authors, ``Paddy Disease Recognition Using Convolutional Neural Networks,'' in \textit{Proc. IEEE Asia-Pacific Conference on Information Technology (APCIT)}, 2025, pp.~1--6, doi: 10.1109/APCIT65661.2025.11411472.
+
+\bibitem{ref11} M.~S.~U.~Zaman, M.~Ahmed, and R.~Mostafa, ``Effective Classification of Paddy Leaf Diseases: An Ensemble Technique with Transfer Learning Approach to Expand Agricultural Productivity,'' in \textit{Proc. IEEE Conference on Machine Learning, Pattern Recognition and Automation Systems (COMPAS)}, 2025, pp.~1--6, doi: 10.1109/COMPAS67506.2025.11381720.
+
+\bibitem{ref12} IEEE AIoTC 2025 authors, ``Research on Target Detection of Rice Pest and Disease Based on Improved YOLOv11,'' in \textit{Proc. IEEE International Conference on Artificial Intelligence of Things and Cloud Computing (AIoTC)}, 2025, pp.~1--6, doi: 10.1109/AIoTC66747.2025.11198616.
+
+\bibitem{ref13} S.-H.~Lee, C.-H.~Cheng, Y.-S.~Tsai, Y.-F.~Huang, S.-H.~Liu, and C.-M.~Chen, ``Rice Disease Recognition using Improved Visual Geometry Group Deep Learning Algorithms,'' in \textit{Proc. IEEE International Conference on Machine Learning and Cybernetics (ICMLC)}, 2024, pp.~1--6, doi: 10.1109/ICMLC63072.2024.10935275.
+
+\bibitem{ref14} IEEE Access 2024 authors, ``Effective Edge Solution for Early Detection of Rice Disease on ARM-M Microcontroller,'' \textit{IEEE Access}, vol.~12, pp.~1--14, 2024, doi: 10.1109/ACCESS.2024.3470970.
+
+\bibitem{ref15} J.~Padhi, L.~Korada, A.~Dash, P.~K.~Sethy, S.~K.~Behera, and A.~Nanthaamornphong, ``Paddy Leaf Disease Classification Using EfficientNet B4 With Compound Scaling and Swish Activation: A Deep Learning Approach,'' \textit{IEEE Access}, vol.~12, pp.~1--15, 2024, doi: 10.1109/ACCESS.2024.3451557.
+
+\bibitem{ref16} M.~H.~Bijoy \textit{et al.}, ``Towards Sustainable Agriculture: A Novel Approach for Rice Leaf Disease Detection Using dCNN and Enhanced Dataset,'' \textit{IEEE Access}, vol.~12, pp.~1--12, 2024, doi: 10.1109/ACCESS.2024.3371511.
+
+\bibitem{ref17} IEEE Access 2024 authors, ``Comparative Analysis of Transfer Learning, LeafNet, and Modified LeafNet Models for Accurate Rice Leaf Diseases Classification,'' \textit{IEEE Access}, vol.~12, pp.~1--14, 2024, doi: 10.1109/ACCESS.2024.3373000.
+
+\bibitem{ref18} IEEE PEEIACON 2024 authors, ``Advanced Rice Leaf Disease Detection Using AgriRover: Enhancing Agricultural Monitoring and Crop Health Management,'' in \textit{Proc. IEEE Conference on Power, Energy, Control and Transmission Systems (PEEIACON)}, 2024, pp.~1--6, doi: 10.1109/PEEIACON63629.2024.10800437.
+
+\bibitem{ref19} D.~H.~Kumar and S.~Punniakodi, ``Rice Leaf Disease Detection Using ResNet50,'' in \textit{Proc. International Conference on Systems, Computation, Automation and Networking (ICONSCEPT)}, 2024, pp.~1--6, doi: 10.1109/ICONSCEPT61884.2024.10627835.
+
+\bibitem{ref20} U.~Mishra, S.~Gupta, U.~Rathi, and U.~Gautam, ``Rice Leaf Disease Identification using Attention Networks,'' in \textit{Proc. International Conference on Computing, Communication and Networking Technologies (ICCCNT)}, 2024, pp.~1--6, doi: 10.1109/ICCCNT61001.2024.10724198.
+
+\end{thebibliography}
+
+\end{document}

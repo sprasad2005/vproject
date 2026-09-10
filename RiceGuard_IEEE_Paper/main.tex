@@ -177,16 +177,16 @@ Strict data governance policies were enforced in software: the independent \text
 \centering
 \caption{Dataset Roles, Sample Counts, and Access Governance}
 \label{tab:dataset_summary}
-\footnotesize
-\setlength{\tabcolsep}{3.5pt}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{llccc}
 \toprule
-\textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Samples} & \textbf{Classes} & \textbf{Training Allowed} \\
+\textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Images} & \textbf{Classes} & \textbf{Access Policy} \\
 \midrule
-RiceLeafDiseaseBD & Primary Train/Val/Test & 7,060 & 6 & \textbf{Yes (Primary)} \\
-RiceSeg5932 & Quantitative XAI Ground Truth & 4,348 & 3 & \textbf{No (XAI Benchmark)} \\
-Sethy5932 & External Domain Shift & 5,932 & 4 & \textbf{No (Locked)} \\
-RiceLeafDiseaseBD5 & External Field Diagnostic & 5,932 & 5 & \textbf{No (Locked)} \\
+RiceLeafDiseaseBD & Primary Train/Val/Test & 7,060 & 6 & \textbf{Train/Eval} \\
+RiceSeg5932 & Quantitative XAI Ground Truth & 4,348 & 3 & \textbf{XAI Benchmark} \\
+Sethy5932 & External Domain Shift & 5,932 & 4 & \textbf{Locked} \\
+RiceLeafDiseaseBD5 & External Field Diagnostic & 5,932 & 5 & \textbf{Locked} \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -206,11 +206,11 @@ All models were trained using AdamW ($\eta_0 = 10^{-4}$, $\beta_1 = 0.9$, $\beta
 \centering
 \caption{Master Experimental Comparison: Disease Classification Performance, Spatial Localization, and Runtime Complexity}
 \label{tab:main_model_comparison}
-\footnotesize
-\setlength{\tabcolsep}{5.5pt}
-\begin{tabular}{llcccccccrc}
+\scriptsize
+\setlength{\tabcolsep}{4.0pt}
+\begin{tabular}{llccccccccc}
 \toprule
-\textbf{Model Variant} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Bal. Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Rec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Latency} & \textbf{Parameters} \\
+\textbf{Model Variant} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Bal. Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Rec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Latency} & \textbf{Parameters (Size)} \\
 \midrule
 Phase 2B Baseline & Classification Only & \textbf{90.12\%} & \textbf{0.8891} & \textbf{89.28\%} & -- & -- & -- & -- & \textbf{10.36 ms} & \textbf{4,015,234} (15.61 MB) \\
 Phase 3 Multi-Task & Class + Raw BBoxes & 88.75\% & 0.8729 & 87.42\% & 0.0223 & 0.0914 & 0.0358 & 0.6032 & 13.52 ms & 6,966,151 (26.86 MB) \\
@@ -231,14 +231,14 @@ Introducing weakly supervised multi-task localization in Phase~3 and Phase~3B re
     \item McNemar's test of classification prediction concordance yields $\chi^2 = 1.18$ ($p = 0.2774$), failing to reject the null hypothesis of equal classification capability.
 \end{itemize}
 
-As detailed in Table~\ref{tab:per_class}, per-class diagnosis shows consistent stability across categories, with Healthy detection maintaining over 0.94 F1 (0.9397 vs. 0.9422).
+As detailed in Table~\ref{tab:per_class} and Fig.~\ref{fig:confusion}, per-class diagnosis shows consistent stability across categories, with Healthy detection maintaining over 0.94 F1 (0.9397 vs. 0.9422).
 
 \begin{table}[htbp]
 \centering
 \caption{Per-Class Diagnostic Performance Breakdown (Test Split)}
 \label{tab:per_class}
-\footnotesize
-\setlength{\tabcolsep}{3.8pt}
+\scriptsize
+\setlength{\tabcolsep}{3.0pt}
 \begin{tabular}{lcccccc}
 \toprule
  & \multicolumn{3}{c}{\textbf{Phase 2B Baseline}} & \multicolumn{3}{c}{\textbf{Phase 3B Refined}} \\
@@ -266,6 +266,13 @@ This empirical result provides an honest characterization of multi-task learning
 \label{fig:tradeoff}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig_confusion.png}
+\caption{Normalized Test Confusion Matrices for: (A) Phase 2B Baseline Classifier (Acc: 90.12\%), and (B) Phase 3B Refined Multi-Task Model (Acc: 88.96\%).}
+\label{fig:confusion}
+\end{figure}
+
 \subsection{Impact of Localization Calibration (Phase 3 vs. Phase 3B)}
 As illustrated in Fig.~\ref{fig:tradeoff}, uncalibrated Phase~3 localization suffered from high false alarm rates due to extreme positive grid class imbalance. Phase~3B refinement (loss weight capping at 10.0, $\tau = 0.60$, $\text{top-}K = 3$) delivered substantial improvements:
 \begin{itemize}
@@ -283,8 +290,8 @@ To determine whether multi-task training grounds model attention onto pathologic
 \centering
 \caption{Quantitative Explainability (XAI) Grounding and Faithfulness Benchmark on Independent RiceSeg5932 Masks ($N=4,348$)}
 \label{tab:xai_results}
-\footnotesize
-\setlength{\tabcolsep}{5.2pt}
+\scriptsize
+\setlength{\tabcolsep}{4.5pt}
 \begin{tabular}{lcccccccc}
 \toprule
  & \multicolumn{3}{c}{\textbf{All Eligible Samples ($N=4,348$)}} & \multicolumn{2}{c}{\textbf{Mutually Correct ($N=280$)}} & \multicolumn{2}{c}{\textbf{Shortcut Diagnostics}} & \textbf{Faithfulness} \\
@@ -326,7 +333,48 @@ This study presented RiceGuard, an empirical evaluation of weakly supervised mul
 
 \FloatBarrier
 
-\bibliographystyle{IEEEtran}
-\bibliography{references}
+\begin{thebibliography}{20}
+
+\bibitem{ref1} P.~T.~Nguyen, D.~C.~Huynh, L.~D.~Ho, H.~T.~Tran, C.~Barbalata, and M.~W.~Dunnigan, ``RiceLDD-YOLO: Optimizing the YOLOv13 Model to Improve the Efficiency of Rice Leaf Disease Detection,'' \textit{IEEE Access}, vol.~14, pp.~1--14, 2026, doi: 10.1109/ACCESS.2026.3679392.
+
+\bibitem{ref2} J.~P.~Singh, D.~Ghosh, A.~Kumar, S.~Bilgaiyan, R.~Kumar, and J.~Singh, ``Hybrid DenseNet Architectures and KerasTuner-Based Optimization for Rice Leaf Disease Detection,'' \textit{IEEE Access}, vol.~14, pp.~1--16, 2026, doi: 10.1109/ACCESS.2026.3664467.
+
+\bibitem{ref3} M.~Ta{\c{s}}c{\i}, ``DBLA-MobileNetV2: Real-Time Rice Leaf Disease Detection on Edge Devices With Dual-Branch Lightweight Attention,'' \textit{IEEE Access}, vol.~14, pp.~1--13, 2026, doi: 10.1109/ACCESS.2026.3662799.
+
+\bibitem{ref4} T.~Mahmud, M.~S.~Akter, T.~Akter, M.~S.~Hossain, and K.~Andersson, ``Exploring Deep Learning and Explainable AI for Precise Rice Leaf Disease Detection and Classification,'' \textit{IEEE Access}, vol.~13, pp.~1--15, 2025, doi: 10.1109/ACCESS.2025.3609671.
+
+\bibitem{ref5} A.~Nawer, U.~H.~Prity, M.~Khaliluzzaman, and Z.~Sultana, ``Interpretable Deep Learning for Rice Leaf Disease Detection: A Self-Attention and XAI Framework,'' in \textit{Proc. IEEE International Conference on Electrical, Computer and Communication Engineering (ECCE)}, 2025, pp.~1--6, doi: 10.1109/ECCE64574.2025.11013842.
+
+\bibitem{ref6} U.~I.~Ismail, H.~N.~Chua, and R.~Nordin, ``Vision Transformer with Explainable AI for Cross-Regional Rice Leaf Disease Detection: A Comparative Study with CNNs,'' in \textit{Proc. IEEE International Conference on Computing (ICOCO)}, 2025, pp.~1--6, doi: 10.1109/ICOCO67189.2025.11334147.
+
+\bibitem{ref7} S.~Joardar, M.~A.~Sabur, M.~R.~Islam, and A.~R.~Refat, ``Attention-Enhanced CNN for Rice Leaf Disease Detection with Grad-CAM Insights,'' in \textit{Proc. IEEE International Conference on Sustainable Technologies for Industry 4.0 (STI)}, 2025, pp.~1--6, doi: 10.1109/STI69347.2025.11367533.
+
+\bibitem{ref8} IEEE ICATC 2025 authors, ``Hybrid Deep Learning approach for Paddy Leaf Disease Detection,'' in \textit{Proc. IEEE International Conference on Advanced Trends in Computer Science (ICATC)}, 2025, pp.~1--6, doi: 10.1109/ICATC68823.2025.11407713.
+
+\bibitem{ref9} IEEE ICOSST 2025 authors, ``Rice Leaf Disease Detection Using MobileNetV2 Transfer Learning: Comparative Study on Small and Large-Scale Datasets with Stream-lit Deployment,'' in \textit{Proc. IEEE International Conference on Open Source Systems and Technologies (ICOSST)}, 2025, pp.~1--6, doi: 10.1109/ICOSST69113.2025.11315468.
+
+\bibitem{ref10} IEEE APCIT 2025 authors, ``Paddy Disease Recognition Using Convolutional Neural Networks,'' in \textit{Proc. IEEE Asia-Pacific Conference on Information Technology (APCIT)}, 2025, pp.~1--6, doi: 10.1109/APCIT65661.2025.11411472.
+
+\bibitem{ref11} M.~S.~U.~Zaman, M.~Ahmed, and R.~Mostafa, ``Effective Classification of Paddy Leaf Diseases: An Ensemble Technique with Transfer Learning Approach to Expand Agricultural Productivity,'' in \textit{Proc. IEEE Conference on Machine Learning, Pattern Recognition and Automation Systems (COMPAS)}, 2025, pp.~1--6, doi: 10.1109/COMPAS67506.2025.11381720.
+
+\bibitem{ref12} IEEE AIoTC 2025 authors, ``Research on Target Detection of Rice Pest and Disease Based on Improved YOLOv11,'' in \textit{Proc. IEEE International Conference on Artificial Intelligence of Things and Cloud Computing (AIoTC)}, 2025, pp.~1--6, doi: 10.1109/AIoTC66747.2025.11198616.
+
+\bibitem{ref13} S.-H.~Lee, C.-H.~Cheng, Y.-S.~Tsai, Y.-F.~Huang, S.-H.~Liu, and C.-M.~Chen, ``Rice Disease Recognition using Improved Visual Geometry Group Deep Learning Algorithms,'' in \textit{Proc. IEEE International Conference on Machine Learning and Cybernetics (ICMLC)}, 2024, pp.~1--6, doi: 10.1109/ICMLC63072.2024.10935275.
+
+\bibitem{ref14} IEEE Access 2024 authors, ``Effective Edge Solution for Early Detection of Rice Disease on ARM-M Microcontroller,'' \textit{IEEE Access}, vol.~12, pp.~1--14, 2024, doi: 10.1109/ACCESS.2024.3470970.
+
+\bibitem{ref15} J.~Padhi, L.~Korada, A.~Dash, P.~K.~Sethy, S.~K.~Behera, and A.~Nanthaamornphong, ``Paddy Leaf Disease Classification Using EfficientNet B4 With Compound Scaling and Swish Activation: A Deep Learning Approach,'' \textit{IEEE Access}, vol.~12, pp.~1--15, 2024, doi: 10.1109/ACCESS.2024.3451557.
+
+\bibitem{ref16} M.~H.~Bijoy \textit{et al.}, ``Towards Sustainable Agriculture: A Novel Approach for Rice Leaf Disease Detection Using dCNN and Enhanced Dataset,'' \textit{IEEE Access}, vol.~12, pp.~1--12, 2024, doi: 10.1109/ACCESS.2024.3371511.
+
+\bibitem{ref17} IEEE Access 2024 authors, ``Comparative Analysis of Transfer Learning, LeafNet, and Modified LeafNet Models for Accurate Rice Leaf Diseases Classification,'' \textit{IEEE Access}, vol.~12, pp.~1--14, 2024, doi: 10.1109/ACCESS.2024.3373000.
+
+\bibitem{ref18} IEEE PEEIACON 2024 authors, ``Advanced Rice Leaf Disease Detection Using AgriRover: Enhancing Agricultural Monitoring and Crop Health Management,'' in \textit{Proc. IEEE Conference on Power, Energy, Control and Transmission Systems (PEEIACON)}, 2024, pp.~1--6, doi: 10.1109/PEEIACON63629.2024.10800437.
+
+\bibitem{ref19} D.~H.~Kumar and S.~Punniakodi, ``Rice Leaf Disease Detection Using ResNet50,'' in \textit{Proc. International Conference on Systems, Computation, Automation and Networking (ICONSCEPT)}, 2024, pp.~1--6, doi: 10.1109/ICONSCEPT61884.2024.10627835.
+
+\bibitem{ref20} U.~Mishra, S.~Gupta, U.~Rathi, and U.~Gautam, ``Rice Leaf Disease Identification using Attention Networks,'' in \textit{Proc. International Conference on Computing, Communication and Networking Technologies (ICCCNT)}, 2024, pp.~1--6, doi: 10.1109/ICCCNT61001.2024.10724198.
+
+\end{thebibliography}
 
 \end{document}

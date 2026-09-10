@@ -152,10 +152,10 @@ where $\mathcal{L}_{\text{obj}}$ is binary cross-entropy with positive weight sc
 \end{equation}
 For positive cells ($t_{i,j} = 1$), bounding-box regression combines Smooth L1 loss on center offsets and Mean Squared Error on square-root dimensions:
 \begin{equation}
-\begin{aligned}
-\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j \in \text{pos}} & \Big[ \text{Smooth}_{L1}(dx_{i,j}, dx^*_{i,j}) + \text{Smooth}_{L1}(dy_{i,j}, dy^*_{i,j}) \\
+\begin{split}
+\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j \in \text{pos}} \Big[ & \text{Smooth}_{L1}(dx_{i,j}, dx^*_{i,j}) + \text{Smooth}_{L1}(dy_{i,j}, dy^*_{i,j}) \\
 & + (\sqrt{w_{i,j}} - \sqrt{w^*_{i,j}})^2 + (\sqrt{h_{i,j}} - \sqrt{h^*_{i,j}})^2 \Big]
-\end{aligned}
+\end{split}
 \end{equation}
 
 \subsection{Phase 3B Calibration Refinement}
@@ -177,8 +177,9 @@ Strict data governance policies were enforced in software: the independent \text
 \centering
 \caption{Dataset Roles, Sample Counts, and Access Governance}
 \label{tab:dataset_summary}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccc}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{llccc}
 \toprule
 \textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Samples} & \textbf{Classes} & \textbf{Training Allowed} \\
 \midrule
@@ -187,8 +188,7 @@ RiceSeg5932 & Quantitative XAI Ground Truth & 4,348 & 3 & \textbf{No (XAI Benchm
 Sethy5932 & External Domain Shift & 5,932 & 4 & \textbf{No (Locked)} \\
 RiceLeafDiseaseBD5 & External Field Diagnostic & 5,932 & 5 & \textbf{No (Locked)} \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}
 \end{table}
 
 \subsection{Training Protocol and Hardware}
@@ -206,8 +206,8 @@ All models were trained using AdamW ($\eta_0 = 10^{-4}$, $\beta_1 = 0.9$, $\beta
 \centering
 \caption{Master Experimental Comparison: Disease Classification Performance, Spatial Localization, and Runtime Complexity}
 \label{tab:main_model_comparison}
-\small
-\setlength{\tabcolsep}{7.5pt}
+\footnotesize
+\setlength{\tabcolsep}{5.5pt}
 \begin{tabular}{llcccccccrc}
 \toprule
 \textbf{Model Variant} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Bal. Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Rec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Latency} & \textbf{Parameters} \\
@@ -230,6 +230,32 @@ Introducing weakly supervised multi-task localization in Phase~3 and Phase~3B re
     \item Phase~3B Macro F1: \textbf{0.8751} (a difference of $-0.0140$ relative to Phase~2B).
     \item McNemar's test of classification prediction concordance yields $\chi^2 = 1.18$ ($p = 0.2774$), failing to reject the null hypothesis of equal classification capability.
 \end{itemize}
+
+As detailed in Table~\ref{tab:per_class}, per-class diagnosis shows consistent stability across categories, with Healthy detection maintaining over 0.94 F1 (0.9397 vs. 0.9422).
+
+\begin{table}[htbp]
+\centering
+\caption{Per-Class Diagnostic Performance Breakdown (Test Split)}
+\label{tab:per_class}
+\footnotesize
+\setlength{\tabcolsep}{3.8pt}
+\begin{tabular}{lcccccc}
+\toprule
+ & \multicolumn{3}{c}{\textbf{Phase 2B Baseline}} & \multicolumn{3}{c}{\textbf{Phase 3B Refined}} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Pathology Category} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} & \textbf{Prec.} & \textbf{Rec.} & \textbf{F1} \\
+\midrule
+Healthy & 0.9262 & 0.9536 & \textbf{0.9397} & 0.9283 & 0.9565 & \textbf{0.9422} \\
+Blast & 0.8565 & 0.8995 & \textbf{0.8775} & 0.8794 & 0.8621 & \textbf{0.8706} \\
+Brown Spot & 0.9215 & 0.8257 & \textbf{0.8710} & 0.8257 & 0.8464 & \textbf{0.8359} \\
+Leaf Smut & 0.7565 & 0.7982 & \textbf{0.7768} & 0.7156 & 0.7573 & \textbf{0.7358} \\
+Tungro & 0.8939 & 0.9496 & \textbf{0.9209} & 0.9318 & 0.9075 & \textbf{0.9195} \\
+Sheath Blight & 0.9677 & 0.9302 & \textbf{0.9486} & 0.9612 & 0.9323 & \textbf{0.9466} \\
+\midrule
+\textbf{Macro Average} & 0.8871 & 0.8928 & \textbf{0.8891} & 0.8737 & 0.8770 & \textbf{0.8751} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 This empirical result provides an honest characterization of multi-task learning in agricultural vision: sharing intermediate convolutional representations between global classification and spatial grid regression induces a slight gradient competition, but equips the model with genuine lesion bounding-box extraction capability with minimal latency overhead (10.46~ms vs. 10.36~ms).
 
@@ -257,8 +283,8 @@ To determine whether multi-task training grounds model attention onto pathologic
 \centering
 \caption{Quantitative Explainability (XAI) Grounding and Faithfulness Benchmark on Independent RiceSeg5932 Masks ($N=4,348$)}
 \label{tab:xai_results}
-\small
-\setlength{\tabcolsep}{6.5pt}
+\footnotesize
+\setlength{\tabcolsep}{5.2pt}
 \begin{tabular}{lcccccccc}
 \toprule
  & \multicolumn{3}{c}{\textbf{All Eligible Samples ($N=4,348$)}} & \multicolumn{2}{c}{\textbf{Mutually Correct ($N=280$)}} & \multicolumn{2}{c}{\textbf{Shortcut Diagnostics}} & \textbf{Faithfulness} \\

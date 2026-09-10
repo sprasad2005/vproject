@@ -22,14 +22,30 @@
 \title{RiceGuard: Weakly Supervised Multi-Task Rice Leaf Disease Classification, Lesion Localization, and Quantitative Explainability Validation}
 
 \author{
-\begin{tabular}[t]{c}
-\textbf{Varad Hiraman Parate, Dhruv A. Gholap, Hrushikesh Suryawanshi, and Arnav Kulkarni} \\
-Department of Information Technology, Vishwakarma Institute of Information Technology, Pune, India \\
-\texttt{\{varad.22311382, dhruv.22311579, hrushikesh.22310354, arnav.22310597\}@viit.ac.in} \\[1.5ex]
-\textbf{Dr. Shalini Wankhade} \\
-Department of Information Technology, Vishwakarma Institute of Technology, Pune, India \\
-\texttt{shalini.wankhade@vit.edu}
-\end{tabular}
+\IEEEauthorblockN{Varad Hiraman Parate}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+varad.22311382@viit.ac.in}
+\and
+\IEEEauthorblockN{Dhruv A. Gholap}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+dhruv.22311579@viit.ac.in}
+\and
+\IEEEauthorblockN{Hrushikesh Suryawanshi}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+hrushikesh.22310354@viit.ac.in}
+\and
+\IEEEauthorblockN{Arnav Kulkarni}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIIT, Pune, India} \\
+arnav.22310597@viit.ac.in}
+\and
+\IEEEauthorblockN{Dr. Shalini Wankhade}
+\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
+\textit{VIT, Pune, India} \\
+shalini.wankhade@vit.edu}
 }
 
 \maketitle
@@ -46,7 +62,7 @@ Rice leaf disease detection, multi-task learning, lesion localization, Efficient
 \label{sec:introduction}
 Rice (\textit{Oryza sativa}) is a staple sustenance crop for more than half of the global population. Foliar fungal and viral diseases---including Rice Blast (\textit{Magnaporthe oryzae}), Brown Spot (\textit{Bipolaris oryzae}), Leaf Smut, Tungro virus, and Sheath Blight---cause annual yield losses exceeding 15--30\% in major agro-ecological zones if uncontained \cite{ref2}, \cite{ref15}. Automated computer-vision diagnostics using convolutional neural networks (CNNs) have shown substantial diagnostic promise across agricultural vision benchmarks \cite{ref4}, \cite{ref10}, \cite{ref19}.
 
-Recent literature demonstrates impressive headline classification accuracies exceeding 95\% on closed-set benchmarks through deep residual networks \cite{ref19}, DenseNet variants \cite{ref2}, \cite{ref17}, compound-scaled EfficientNets \cite{ref15}, and Vision Transformers \cite{ref6}. Concurrently, dedicated object detection frameworks such as YOLOv11 and YOLOv13 have been adapted for agricultural pest and lesion bounding-box extraction \cite{ref1}, \cite{ref12}, while lightweight variants target edge microcontrollers \cite{ref3}, \cite{ref14}.
+Recent literature demonstrates impressive headline classification accuracies exceeding 95\% on closed-set benchmarks through deep residual networks \cite{ref19}, DenseNet variants with Squeeze-and-Excitation blocks \cite{ref2}, custom LeafNet architectures \cite{ref17}, compound-scaled EfficientNets \cite{ref15}, and Vision Transformers \cite{ref6}. Concurrently, dedicated object detection frameworks such as YOLOv11 and YOLOv13 have been adapted for agricultural pest and lesion bounding-box extraction \cite{ref1}, \cite{ref12}, while lightweight variants target edge microcontrollers and mobile deployment \cite{ref3}, \cite{ref9}, \cite{ref14}.
 
 Despite high benchmark accuracy, agricultural deep learning systems face a fundamental scientific limitation: standard models optimize purely for global categorical labels, operating as black boxes without spatial constraints on where features are extracted \cite{ref4}, \cite{ref5}, \cite{ref7}. Consequently, networks frequently exploit spurious background shortcuts (such as soil textures, field water, leaf boundaries, and image border artifacts) rather than true pathological lesion morphology \cite{ref6}, \cite{ref8}. While qualitative Grad-CAM saliency heatmaps are frequently displayed in literature \cite{ref4}, \cite{ref7}, systematic quantitative evaluations of explanation grounding against independent, pixel-level ground-truth lesion masks remain sparse.
 
@@ -64,13 +80,13 @@ The primary contributions of this work are:
 \label{sec:related_work}
 
 \subsection{Deep Learning Classification in Rice Pathology}
-Deep learning architectures for foliar rice diagnosis have evolved from classical VGG networks \cite{ref13} toward compound-scaled CNNs, dense residual connections, and attention mechanisms. Padhi \textit{et al.} \cite{ref15} demonstrated 96.9\% classification accuracy on the Paddy Doctor dataset using EfficientNet-B4 with Swish activations. Singh \textit{et al.} \cite{ref2} combined DenseNet variants with Squeeze-and-Excitation (SE) blocks, achieving strong kappa agreement ($\kappa = 0.9937$). Standard ResNet50 \cite{ref19} and custom LeafNet variants \cite{ref17} have also been benchmarked, alongside deep ensemble techniques \cite{ref11} and standard transfer learning pipelines \cite{ref10}, \cite{ref16}. While achieving high categorical precision, these classification-only systems do not output spatial lesion boundaries, preventing verification of whether disease predictions stem from genuine foliar lesions.
+Deep learning architectures for foliar rice diagnosis have evolved from classical VGG networks \cite{ref13} toward compound-scaled CNNs, dense residual connections, and attention mechanisms. Padhi \textit{et al.} \cite{ref15} demonstrated 96.91\% classification accuracy on the Paddy Doctor dataset (23,916 images across nine diseases) using EfficientNet-B4 with Swish activations. Singh \textit{et al.} \cite{ref2} combined DenseNet variants with Squeeze-and-Excitation (SE) blocks and KerasTuner hyperparameter optimization across 3,829 images, achieving strong Cohen's kappa agreement ($\kappa = 0.9937$). Standard ResNet50 transfer learning baselines \cite{ref19} and comparative LeafNet studies \cite{ref17} (where Modified LeafNet reached 87.76\%) have also been benchmarked, alongside deep ensemble techniques \cite{ref11}, transfer learning across CNN families \cite{ref10}, and enhanced convolutional networks for sustainable agriculture \cite{ref16}. While achieving high categorical precision, these classification-only systems do not output spatial lesion boundaries, preventing verification of whether disease predictions stem from genuine foliar lesions.
 
-\subsection{Object Detection and Edge-Deployed Systems}
-To localize lesions, several studies have leveraged object detection architectures. Nguyen \textit{et al.} \cite{ref1} introduced RiceLDD-YOLO based on YOLOv13, achieving a 1.7~ms inference latency with an $\text{mAP}_{50}$ of 56.1\%. Similar small-target detection has been explored via improved YOLOv11 frameworks \cite{ref12}. For resource-constrained edge environments, Taşcı \cite{ref3} deployed DBLA-MobileNetV2 on Jetson Nano edge boards (98.30\% accuracy), while dedicated microcontroller implementations have been demonstrated on ARM-M microcontrollers \cite{ref14}, robotic field rovers \cite{ref18}, and mobile deployment pipelines \cite{ref8}, \cite{ref9}. However, pure object detection models require complex multi-scale anchor grids, incur heavy latency overheads, and do not inherently provide multi-modal explainability mechanisms.
+\subsection{Object Detection, Edge Deployment, and Robotic Systems}
+To localize lesions, several studies have leveraged object detection architectures. Nguyen \textit{et al.} \cite{ref1} introduced RiceLDD-YOLO based on YOLOv13, achieving a 1.7~ms inference latency with an $\text{mAP}_{50}$ of 56.1\% and $\text{mAP}_{50:95}$ of 33.5\%. Similar small-target detection in complex scenes has been explored via improved SPD-YOLOv11 frameworks \cite{ref12} reporting over 93\% accuracy with MPDIoU loss. For resource-constrained edge environments, Taşcı \cite{ref3} deployed DBLA-MobileNetV2 with dual-branch lightweight attention on Jetson Nano edge boards (98.30\% accuracy), while dedicated embedded implementations have been demonstrated on ARM-M microcontrollers \cite{ref14} (where quantized FD-MobileNet reached 98.44\%), autonomous AgriRover field rovers \cite{ref18} using DenseNet-201, and mobile deployment pipelines with Streamlit \cite{ref9} or drift-monitoring mechanisms \cite{ref8}. However, pure object detection models require complex multi-scale anchor grids, incur latency overheads, and do not inherently provide multi-modal explainability mechanisms.
 
-\subsection{Explainability and Attention Mechanisms}
-Explainable AI (XAI) in agricultural vision has predominantly utilized visual attribution methods. Mahmud \textit{et al.} \cite{ref4} conducted comparative Grad-CAM and LIME visualizations across five disease categories. Nawer \textit{et al.} \cite{ref5} integrated self-attention CNNs with SHAP pixel attributions, and Joardar \textit{et al.} \cite{ref7} combined channel attention with Grad-CAM inspection. Crucially, Ismail \textit{et al.} \cite{ref6} evaluated Vision Transformers against CNNs across regional domain shifts (Bangladesh vs. India), uncovering catastrophic accuracy collapses (98\% down to 38\%) when models encounter shifted field backgrounds. Attention networks \cite{ref20} improve feature focus, yet existing works evaluate saliency heatmaps strictly as qualitative qualitative visual images without quantitative overlap scoring against independent ground-truth lesion segmentation masks.
+\subsection{Explainability, Attention Mechanisms, and Domain Generalization}
+Explainable AI (XAI) in agricultural vision has predominantly utilized visual attribution methods. Mahmud \textit{et al.} \cite{ref4} conducted comparative Grad-CAM, Grad-CAM++, and LIME visualizations with preprocessing (Gaussian filtering, CLAHE, Canny) across five disease categories including Blast and Brown Spot. Nawer \textit{et al.} \cite{ref5} integrated self-attention CNNs with SHAP pixel attributions, and Joardar \textit{et al.} \cite{ref7} combined channel and spatial attention with Grad-CAM inspection (reporting 99\% test accuracy). Attention networks \cite{ref20} improve feature prioritization for disease identification. Crucially, Ismail \textit{et al.} \cite{ref6} evaluated Vision Transformers (ViTXAI-RDD) against CNNs across regional domain shifts (Bangladesh vs. India), uncovering catastrophic accuracy collapses (98\% down to 38\%) when models encounter shifted field backgrounds. Yet, existing works evaluate saliency heatmaps strictly as qualitative visual images without quantitative overlap scoring against independent ground-truth lesion segmentation masks.
 
 \subsection{Identified Research Gap}
 Existing literature demonstrates mature classification benchmarks, fast YOLO detectors, and qualitative XAI visualizations. However, there is a distinct absence of controlled studies examining whether \textbf{weakly supervised multi-task learning} (combining classification and coarse bounding-box localization over a single lightweight backbone) can deliver reliable lesion grounding and reduce background shortcut reliance without requiring expensive pixel-level segmentation masks during model training.

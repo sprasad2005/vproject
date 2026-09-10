@@ -23,28 +23,33 @@
 
 \author{
 \IEEEauthorblockN{Varad Hiraman Parate}
-\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
-\textit{VIIT, Pune, India} \\
+\IEEEauthorblockA{\textit{Department of Information Technology} \\
+\textit{Vishwakarma Institute of Information Technology} \\
+Pune, India \\
 varad.22311382@viit.ac.in}
 \and
 \IEEEauthorblockN{Dhruv A. Gholap}
-\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
-\textit{VIIT, Pune, India} \\
+\IEEEauthorblockA{\textit{Department of Information Technology} \\
+\textit{Vishwakarma Institute of Information Technology} \\
+Pune, India \\
 dhruv.22311579@viit.ac.in}
 \and
 \IEEEauthorblockN{Hrushikesh Suryawanshi}
-\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
-\textit{VIIT, Pune, India} \\
+\IEEEauthorblockA{\textit{Department of Information Technology} \\
+\textit{Vishwakarma Institute of Information Technology} \\
+Pune, India \\
 hrushikesh.22310354@viit.ac.in}
 \and
 \IEEEauthorblockN{Arnav Kulkarni}
-\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
-\textit{VIIT, Pune, India} \\
+\IEEEauthorblockA{\textit{Department of Information Technology} \\
+\textit{Vishwakarma Institute of Information Technology} \\
+Pune, India \\
 arnav.22310597@viit.ac.in}
 \and
 \IEEEauthorblockN{Dr. Shalini Wankhade}
-\IEEEauthorblockA{\textit{Dept. of Information Technology} \\
-\textit{VIT, Pune, India} \\
+\IEEEauthorblockA{\textit{Department of Information Technology} \\
+\textit{Vishwakarma Institute of Technology} \\
+Pune, India \\
 shalini.wankhade@vit.edu}
 }
 
@@ -153,13 +158,18 @@ where $\mathcal{L}_{\text{cls}}$ is standard multi-class cross-entropy loss with
 \end{equation}
 where $\mathcal{L}_{\text{obj}}$ is binary cross-entropy with positive weight scaling ($w_{\text{pos}}$):
 \begin{equation}
-\mathcal{L}_{\text{obj}} = -\frac{1}{49} \sum_{i,j} \left[ w_{\text{pos}} t_{i,j} \log \sigma(l_{i,j}) + (1 - t_{i,j}) \log (1 - \sigma(l_{i,j})) \right]
+\begin{split}
+\mathcal{L}_{\text{obj}} = -\frac{1}{49} \sum_{i,j} \Big[ & w_{\text{pos}} t_{i,j} \log \sigma(l_{i,j}) \\
+& + (1 - t_{i,j}) \log (1 - \sigma(l_{i,j})) \Big]
+\end{split}
 \end{equation}
 For positive cells ($t_{i,j} = 1$), bounding-box regression combines Smooth L1 loss on center offsets and Mean Squared Error on square-root dimensions:
 \begin{equation}
 \begin{split}
-\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j \in \text{pos}} \Big[ & \text{Smooth}_{L1}(dx_{i,j}, dx^*_{i,j}) + \text{Smooth}_{L1}(dy_{i,j}, dy^*_{i,j}) \\
-& + (\sqrt{w_{i,j}} - \sqrt{w^*_{i,j}})^2 + (\sqrt{h_{i,j}} - \sqrt{h^*_{i,j}})^2 \Big]
+\mathcal{L}_{\text{box}} = \frac{1}{N_{\text{pos}}} \sum_{i,j \in \text{pos}} \Big[ & \text{Smooth}_{L1}(dx_{i,j}, dx^*_{i,j}) \\
+& + \text{Smooth}_{L1}(dy_{i,j}, dy^*_{i,j}) \\
+& + (\sqrt{w_{i,j}} - \sqrt{w^*_{i,j}})^2 \\
+& + (\sqrt{h_{i,j}} - \sqrt{h^*_{i,j}})^2 \Big]
 \end{split}
 \end{equation}
 
@@ -180,18 +190,18 @@ Strict data governance policies were enforced in software: the independent \text
 
 \begin{table}[htbp]
 \centering
-\caption{Dataset Roles, Sample Counts, and Access Governance}
+\caption{Dataset Summary and Access Governance Protocols}
 \label{tab:dataset_summary}
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{llccc}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\begin{tabular}{llcc}
 \toprule
-\textbf{Dataset Name} & \textbf{Role / Purpose} & \textbf{Images} & \textbf{Classes} & \textbf{Access Policy} \\
+\textbf{Dataset Name} & \textbf{Evaluation Role} & \textbf{Images} & \textbf{Classes} \\
 \midrule
-RiceLeafDiseaseBD & Primary Train/Val/Test & 7,060 & 6 & \textbf{Train/Eval} \\
-RiceSeg5932 & Quantitative XAI Ground Truth & 4,348 & 3 & \textbf{XAI Benchmark} \\
-Sethy5932 & External Domain Shift & 5,932 & 4 & \textbf{Locked} \\
-RiceLeafDiseaseBD5 & External Field Diagnostic & 5,932 & 5 & \textbf{Locked} \\
+RiceLeafDiseaseBD & Primary Train / Val / Test & 7,060 & 6 \\
+RiceSeg5932 & Independent XAI Ground Truth & 4,348 & 3 \\
+Sethy5932 & External Domain Shift (Locked) & 5,932 & 4 \\
+RiceLeafDiseaseBD5 & External Field Diagnostic (Locked) & 5,932 & 5 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -211,8 +221,8 @@ All models were trained using AdamW ($\eta_0 = 10^{-4}$, $\beta_1 = 0.9$, $\beta
 \centering
 \caption{Master Experimental Comparison: Disease Classification Performance, Spatial Localization, and Runtime Complexity}
 \label{tab:main_model_comparison}
-\scriptsize
-\setlength{\tabcolsep}{4.0pt}
+\footnotesize
+\setlength{\tabcolsep}{6.0pt}
 \begin{tabular}{llccccccccc}
 \toprule
 \textbf{Model Variant} & \textbf{Supervision Type} & \textbf{Accuracy} & \textbf{Macro F1} & \textbf{Bal. Acc.} & \textbf{Loc. Prec.} & \textbf{Loc. Rec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Latency} & \textbf{Parameters (Size)} \\
@@ -242,8 +252,8 @@ As detailed in Table~\ref{tab:per_class} and Fig.~\ref{fig:confusion}, per-class
 \centering
 \caption{Per-Class Diagnostic Performance Breakdown (Test Split)}
 \label{tab:per_class}
-\scriptsize
-\setlength{\tabcolsep}{3.0pt}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lcccccc}
 \toprule
  & \multicolumn{3}{c}{\textbf{Phase 2B Baseline}} & \multicolumn{3}{c}{\textbf{Phase 3B Refined}} \\
@@ -271,12 +281,12 @@ This empirical result provides an honest characterization of multi-task learning
 \label{fig:tradeoff}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/fig3_confusion.png}
+\includegraphics[width=0.88\textwidth]{figures/fig3_confusion.png}
 \caption{Normalized Test Confusion Matrices for: (A) Phase 2B Baseline Classifier (Acc: 90.12\%), and (B) Phase 3B Refined Multi-Task Model (Acc: 88.96\%).}
 \label{fig:confusion}
-\end{figure}
+\end{figure*}
 
 \begin{figure}[htbp]
 \centering
@@ -301,8 +311,8 @@ Table~\ref{tab:calibration_ablation} summarizes the operational impact of calibr
 \centering
 \caption{Impact of Calibration Refinement on Localization and False Alarms}
 \label{tab:calibration_ablation}
-\scriptsize
-\setlength{\tabcolsep}{3.2pt}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Configuration} & \textbf{Loc. Prec.} & \textbf{Loc. F1} & \textbf{Mean IoU} & \textbf{Healthy FPR} & \textbf{Boxes/Image} \\
@@ -322,8 +332,8 @@ To determine whether multi-task training grounds model attention onto pathologic
 \centering
 \caption{Quantitative Explainability (XAI) Grounding and Faithfulness Benchmark on Independent RiceSeg5932 Masks ($N=4,348$)}
 \label{tab:xai_results}
-\scriptsize
-\setlength{\tabcolsep}{4.5pt}
+\footnotesize
+\setlength{\tabcolsep}{5.5pt}
 \begin{tabular}{lcccccccc}
 \toprule
  & \multicolumn{3}{c}{\textbf{All Eligible Samples ($N=4,348$)}} & \multicolumn{2}{c}{\textbf{Mutually Correct ($N=280$)}} & \multicolumn{2}{c}{\textbf{Shortcut Diagnostics}} & \textbf{Faithfulness} \\
